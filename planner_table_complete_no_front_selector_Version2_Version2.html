@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Planner Table Complete</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f3f4f6;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#d1d5db;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --secondary:#e5e7eb;
+      --danger:#dc2626;
+      --ok:#166534;
+      --okbg:#ecfdf5;
+      --warn:#92400e;
+      --warnbg:#fffbeb;
+      --shadow:0 4px 14px rgba(0,0,0,.06);
+    }
+
+    body.dark{
+      --bg:#0f172a;
+      --card:#111827;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --line:#374151;
+      --primary:#3b82f6;
+      --primary2:#2563eb;
+      --secondary:#1f2937;
+      --danger:#ef4444;
+      --ok:#4ade80;
+      --okbg:#052e16;
+      --warn:#fbbf24;
+      --warnbg:#3f2b00;
+      --shadow:0 8px 24px rgba(0,0,0,.28);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      padding:10px;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Arial,sans-serif;
+      transition:background .2s,color .2s;
+    }
+
+    .container{max-width:1600px;margin:0 auto}
+    h1{margin:0 0 8px;font-size:22px}
+    h2{margin:0 0 10px;font-size:18px}
+    h3{margin:0 0 8px;font-size:16px}
+    .sub{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+
+    .card{
+      background:var(--card);
+      border-radius:16px;
+      padding:14px;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
+    }
+
+    .header-export{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      background:linear-gradient(180deg,var(--card) 0%, color-mix(in srgb, var(--card) 92%, #94a3b8 8%) 100%);
+      margin-bottom:12px;
+    }
+
+    .header-grid{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr;
+      gap:12px;
+    }
+
+    @media (max-width:900px){
+      .header-grid{grid-template-columns:1fr}
+    }
+
+    .header-title{
+      font-size:24px;
+      font-weight:800;
+      margin:0 0 6px;
+    }
+
+    .header-meta{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .meta-box{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      background:var(--card);
+    }
+
+    .meta-box .k{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+
+    .meta-box .v{
+      font-size:15px;
+      font-weight:700;
+      word-break:break-word;
+    }
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+    @media (max-width:1000px){
+      .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+    }
+
+    label{display:block;margin:8px 0 6px;font-size:14px;font-weight:bold}
+
+    input, select, button, textarea{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      font-size:16px;
+      background:var(--card);
+      color:var(--text);
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+      font-family:Arial,sans-serif;
+    }
+
+    button{
+      border:none;
+      background:var(--primary);
+      color:#fff;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:hover{background:var(--primary2)}
+    .btn-secondary{background:var(--secondary);color:var(--text)}
+    .btn-secondary:hover{filter:brightness(1.05)}
+    .btn-danger{background:var(--danger);color:#fff}
+    .btn-danger:hover{filter:brightness(.95)}
+
+    .btn-small{
+      width:auto;
+      min-width:36px;
+      padding:7px 10px;
+      border-radius:10px;
+      font-size:13px;
+    }
+
+    .row-btns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .row-btns button{flex:1 1 150px}
+
+    .help{font-size:13px;color:var(--muted);line-height:1.4;margin-top:6px}
+    .order-box{
+      margin-top:10px;
+      padding:10px;
+      border:1px solid #93c5fd;
+      background:color-mix(in srgb, var(--card) 70%, #dbeafe 30%);
+      border-radius:12px;
+      font-size:14px;
+      line-height:1.5;
+      overflow-wrap:anywhere;
+    }
+
+    .list-manager{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .manager-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:8px;
+      background:color-mix(in srgb, var(--card) 92%, #6b7280 8%);
+      flex-wrap:wrap;
+    }
+
+    .manager-actions{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+
+    .dot{
+      width:16px;
+      height:16px;
+      border-radius:999px;
+      border:1px solid #999;
+      display:inline-block;
+      flex-shrink:0;
+    }
+
+    .size-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:34px;
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      border:1px solid rgba(0,0,0,.12);
+      line-height:1.2;
+    }
+
+    .table-wrap{
+      overflow:auto;
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--card);
+      -webkit-overflow-scrolling:touch;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:900px;
+    }
+
+    th, td{
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      padding:8px;
+      text-align:center;
+      font-size:14px;
+    }
+
+    th{
+      background:color-mix(in srgb, var(--card) 90%, #94a3b8 10%);
+      font-weight:800;
+      position:sticky;
+      top:0;
+      z-index:2;
+    }
+
+    td:first-child, th:first-child{
+      text-align:left;
+      min-width:220px;
+      position:sticky;
+      left:0;
+      background:var(--card);
+      z-index:1;
+    }
+
+    th:first-child{z-index:3}
+
+    .cell-input{
+      width:72px;
+      text-align:center;
+      padding:8px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      font-size:15px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+
+    @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:520px){.stats{grid-template-columns:1fr}}
+
+    .stat{
+      background:color-mix(in srgb, var(--card) 92%, #94a3b8 8%);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .stat .k{font-size:12px;color:var(--muted)}
+    .stat .v{font-size:20px;font-weight:800;margin-top:4px}
+
+    .msg{
+      margin-top:10px;
+      padding:10px;
+      border-radius:10px;
+      font-size:14px;
+      line-height:1.4;
+    }
+
+    .ok{background:var(--okbg);color:var(--ok);border:1px solid color-mix(in srgb, var(--ok) 45%, #ffffff 55%)}
+    .warn{background:var(--warnbg);color:var(--warn);border:1px solid color-mix(in srgb, var(--warn) 45%, #ffffff 55%)}
+
+    .rows-rules{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+
+    @media (max-width:1000px){.rows-rules{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.rows-rules{grid-template-columns:1fr}}
+
+    .mesa-wrapper{
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .mesa-real{
+      display:grid;
+      gap:10px;
+      align-items:stretch;
+      margin-top:12px;
+    }
+
+    .pila{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--card);
+      padding:12px;
+      min-height:170px;
+    }
+
+    .coords{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:bold}
+
+    .badge{
+      display:inline-block;
+      padding:4px 8px;
+      border-radius:999px;
+      background:color-mix(in srgb, var(--card) 70%, #dbeafe 30%);
+      color:var(--primary);
+      border:1px solid color-mix(in srgb, var(--primary) 30%, #ffffff 70%);
+      font-size:12px;
+      font-weight:bold;
+      margin-bottom:8px;
+      margin-right:6px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:5px 9px;
+      margin:4px 4px 0 0;
+      font-size:12px;
+      background:color-mix(in srgb, var(--card) 92%, #94a3b8 8%);
+      flex-wrap:wrap;
+    }
+
+    .check-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+    }
+
+    @media (max-width:700px){.check-grid{grid-template-columns:1fr}}
+
+    .check-box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:color-mix(in srgb, var(--card) 95%, #6b7280 5%);
+    }
+
+    .legend-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    @media (max-width:700px){.legend-grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:480px){.legend-grid{grid-template-columns:1fr}}
+
+    .footer-note{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .top-tools{
+      display:flex;
+      justify-content:flex-end;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+
+    .top-tools select{
+      max-width:240px;
+    }
+
+    .lock-banner{
+      display:none;
+      padding:10px 12px;
+      border-radius:12px;
+      margin-bottom:10px;
+      border:1px solid color-mix(in srgb, var(--warn) 35%, #ffffff 65%);
+      background:var(--warnbg);
+      color:var(--warn);
+      font-size:14px;
+      font-weight:700;
+    }
+
+    body.locked .lock-banner{display:block}
+    body.locked .lockable{
+      pointer-events:none;
+      opacity:.72;
+      user-select:none;
+    }
+
+    #exportArea{background:transparent}
+
+    @media print{
+      body{background:#fff;padding:0;color:#111827}
+      .no-print{display:none !important}
+      .card{box-shadow:none;border:1px solid #ddd;background:#fff}
+      .header-export{box-shadow:none;background:#fff;border:1px solid #ddd}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-tools no-print">
+      <select id="languageSelect" onchange="setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="es">Español</option>
+      </select>
+      <button class="btn-secondary" onclick="toggleDarkMode()" id="darkModeBtn">Dark mode</button>
+      <button class="btn-secondary" onclick="toggleEditLock()" id="lockBtn">Lock editing</button>
+    </div>
+
+    <div class="lock-banner no-print" id="lockBanner">Editing is locked.</div>
+
+    <div class="card no-print">
+      <h1 data-i18n="appTitle">Table Planner</h1>
+      <div class="sub" data-i18n="appSubtitle">
+        Complete bilingual planner with strict color-size sequence, lock mode, dark mode, and CSV import.
+      </div>
+
+      <div class="lockable">
+        <div class="grid-4">
+          <div>
+            <label for="storeName" data-i18n="store">Store</label>
+            <input type="text" id="storeName" placeholder="Store name">
+          </div>
+          <div>
+            <label for="tableName" data-i18n="table">Table</label>
+            <input type="text" id="tableName" placeholder="Table name">
+          </div>
+          <div>
+            <label for="planDate" data-i18n="date">Date</label>
+            <input type="date" id="planDate">
+          </div>
+          <div>
+            <label for="departmentName" data-i18n="department">Department / Season</label>
+            <input type="text" id="departmentName" placeholder="Department / Season">
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label for="planNotes" data-i18n="notes">Notes</label>
+          <textarea id="planNotes" placeholder="Additional notes..."></textarea>
+        </div>
+
+        <div class="grid-4">
+          <div>
+            <label for="numBoxes" data-i18n="boxes">Boxes</label>
+            <input type="number" id="numBoxes" min="1" value="10">
+          </div>
+          <div>
+            <label for="numStacks" data-i18n="stacks">Stacks</label>
+            <input type="number" id="numStacks" min="1" value="12">
+          </div>
+          <div>
+            <label for="planColumns" data-i18n="columns">Plan columns</label>
+            <input type="number" id="planColumns" min="1" value="4">
+          </div>
+          <div>
+            <label for="configRows" data-i18n="configRows">Configurable rows</label>
+            <select id="configRows">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rows-rules">
+          <div>
+            <label for="rowRule0" data-i18n="row1">Row 1</label>
+            <select id="rowRule0">
+              <option value="sizes">Sizes</option>
+              <option value="colors">Colors</option>
+              <option value="sequential">Sequential</option>
+            </select>
+          </div>
+          <div>
+            <label for="rowRule1" data-i18n="row2">Row 2</label>
+            <select id="rowRule1">
+              <option value="sizes">Sizes</option>
+              <option value="colors" selected>Colors</option>
+              <option value="sequential">Sequential</option>
+            </select>
+          </div>
+          <div>
+            <label for="rowRule2" data-i18n="row3">Row 3</label>
+            <select id="rowRule2">
+              <option value="sizes">Sizes</option>
+              <option value="colors" selected>Colors</option>
+              <option value="sequential">Sequential</option>
+            </select>
+          </div>
+          <div>
+            <label for="rowRuleRest" data-i18n="rest">Rest</label>
+            <select id="rowRuleRest">
+              <option value="sequential" selected>Sequential</option>
+              <option value="sizes">Sizes</option>
+              <option value="colors">Colors</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:12px;">
+          <div class="card" style="margin:0;box-shadow:none;border:1px solid var(--line);">
+            <h2 style="margin-top:0;" data-i18n="manageColors">Manage colors</h2>
+            <div class="grid-3">
+              <div>
+                <label for="newColorName" data-i18n="name">Name</label>
+                <input type="text" id="newColorName" placeholder="Beige">
+              </div>
+              <div>
+                <label for="newColorHex" data-i18n="visualColor">Visual color</label>
+                <input type="color" id="newColorHex" value="#d6c2a1">
+              </div>
+              <div style="display:flex;align-items:end;">
+                <button onclick="addColor()" data-i18n="addColor">Add color</button>
+              </div>
+            </div>
+            <div class="row-btns">
+              <button class="btn-secondary" onclick="sortColorsByLightness()" data-i18n="sortLightDark">Sort light → dark</button>
+            </div>
+            <div id="colorList" class="list-manager"></div>
+          </div>
+
+          <div class="card" style="margin:0;box-shadow:none;border:1px solid var(--line);">
+            <h2 style="margin-top:0;" data-i18n="manageSizes">Manage sizes</h2>
+            <div class="grid-3">
+              <div>
+                <label for="newSizeName" data-i18n="size">Size</label>
+                <input type="text" id="newSizeName" placeholder="XXXL">
+              </div>
+              <div>
+                <label for="newSizeHex" data-i18n="visualColor">Visual color</label>
+                <input type="color" id="newSizeHex" value="#a78bfa">
+              </div>
+              <div style="display:flex;align-items:end;">
+                <button onclick="addSize()" data-i18n="addSize">Add size</button>
+              </div>
+            </div>
+            <div id="sizeList" class="list-manager"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;box-shadow:none;border:1px solid var(--line);">
+          <h2 style="margin-top:0;" data-i18n="importExportJson">Import / Export JSON</h2>
+          <div class="grid-2">
+            <div>
+              <label for="jsonConfig" data-i18n="json">JSON</label>
+              <textarea id="jsonConfig" placeholder="Paste configuration JSON here"></textarea>
+            </div>
+            <div>
+              <div class="row-btns" style="margin-top:0;">
+                <button class="btn-secondary" onclick="exportConfigJSON()" data-i18n="exportJson">Export JSON</button>
+                <button class="btn-secondary" onclick="copyConfigJSON()" data-i18n="copyJson">Copy JSON</button>
+                <button onclick="importConfigJSON()" data-i18n="importJson">Import JSON</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;box-shadow:none;border:1px solid var(--line);">
+          <h2 style="margin-top:0;" data-i18n="importCsv">Import CSV</h2>
+          <div class="grid-2">
+            <div>
+              <label for="csvFile" data-i18n="csvFile">CSV file</label>
+              <input type="file" id="csvFile" accept=".csv,text/csv">
+            </div>
+            <div>
+              <div class="row-btns" style="margin-top:28px;">
+                <button onclick="importCSVFile()" data-i18n="importCsvBtn">Import CSV</button>
+                <button class="btn-secondary" onclick="downloadCSVTemplate()" data-i18n="downloadCsvTemplate">Download CSV template</button>
+              </div>
+              <div class="help" data-i18n="csvHelp">
+                Expected format: first column = color, next columns = sizes.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-box">
+          <b data-i18n="currentColorOrder">Current color order:</b>
+          <div id="currentOrder"></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row-btns">
+        <button onclick="generatePlan()" data-i18n="generatePlan">Generate plan</button>
+        <button class="btn-secondary" onclick="saveStateManual()" data-i18n="save">Save</button>
+        <button class="btn-secondary" onclick="exportPDF()" data-i18n="exportPdf">Export PDF</button>
+        <button class="btn-secondary" onclick="downloadImage()" data-i18n="downloadImage">Download image</button>
+        <button class="btn-secondary" onclick="sharePlan()" data-i18n="share">Share</button>
+        <button class="btn-secondary" onclick="window.print()" data-i18n="print">Print</button>
+        <button class="btn-danger" onclick="restoreDefaults()" data-i18n="restoreDefaults">Restore defaults</button>
+      </div>
+
+      <div id="message"></div>
+    </div>
+
+    <div id="exportArea">
+      <div class="header-export">
+        <div class="header-grid">
+          <div>
+            <div class="header-title" id="headerTitle">Table Planner</div>
+            <div class="header-meta" id="headerSubtitle">Display setup summary</div>
+            <div class="header-meta" id="headerNotesView"></div>
+          </div>
+          <div class="meta-box">
+            <div class="k" data-i18n="date">Date</div>
+            <div class="v" id="headerDate"></div>
+          </div>
+          <div class="meta-box">
+            <div class="k" data-i18n="department">Department / Season</div>
+            <div class="v" id="headerDepartment"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="generalSummary">General summary</h2>
+        <div id="stats" class="stats"></div>
+        <div id="summaryText"></div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="displayCheck">Display check</h2>
+        <div id="displayCheck" class="check-grid"></div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="sizeLegend">Size legend</h2>
+        <div id="sizeLegend" class="legend-grid"></div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="tablePlan">Table plan</h2>
+        <div class="mesa-wrapper">
+          <div id="realTable" class="mesa-real"></div>
+        </div>
+        <div class="footer-note" data-i18n="footerNote">
+          Dot = garment color. Badge = size color.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "planner_table_complete_no_front_selector_Version2";
+
+    const BASE_COLOR_TRANSLATIONS = {
+      White: { en: "White", es: "Blanco" },
+      Yellow: { en: "Yellow", es: "Amarillo" },
+      Green: { en: "Green", es: "Verde" },
+      Blue: { en: "Blue", es: "Azul" },
+      Red: { en: "Red", es: "Rojo" },
+      Black: { en: "Black", es: "Negro" }
+    };
+
+    const I18N = {
+      en: {
+        appTitle: "Table Planner",
+        appSubtitle: "Complete bilingual planner with strict color-size sequence, lock mode, dark mode, and CSV import.",
+        store: "Store",
+        table: "Table",
+        date: "Date",
+        department: "Department / Season",
+        notes: "Notes",
+        boxes: "Boxes",
+        stacks: "Stacks",
+        columns: "Plan columns",
+        configRows: "Configurable rows",
+        row1: "Row 1",
+        row2: "Row 2",
+        row3: "Row 3",
+        rest: "Rest",
+        sizes: "Sizes",
+        colors: "Colors",
+        sequential: "Sequential",
+        manageColors: "Manage colors",
+        manageSizes: "Manage sizes",
+        name: "Name",
+        size: "Size",
+        visualColor: "Visual color",
+        addColor: "Add color",
+        addSize: "Add size",
+        sortLightDark: "Sort light → dark",
+        importExportJson: "Import / Export JSON",
+        json: "JSON",
+        exportJson: "Export JSON",
+        copyJson: "Copy JSON",
+        importJson: "Import JSON",
+        importCsv: "Import CSV",
+        csvFile: "CSV file",
+        importCsvBtn: "Import CSV",
+        downloadCsvTemplate: "Download CSV template",
+        csvHelp: "Expected format: first column = color, next columns = sizes.",
+        currentColorOrder: "Current color order:",
+        generatePlan: "Generate plan",
+        save: "Save",
+        exportPdf: "Export PDF",
+        downloadImage: "Download image",
+        share: "Share",
+        print: "Print",
+        restoreDefaults: "Restore defaults",
+        generalSummary: "General summary",
+        displayCheck: "Display check",
+        sizeLegend: "Size legend",
+        tablePlan: "Table plan",
+        footerNote: "Dot = garment color. Badge = size color.",
+        generatedOk: "Plan generated successfully.",
+        savedOk: "Data saved.",
+        jsonGenerated: "JSON generated.",
+        jsonCopied: "JSON copied to clipboard.",
+        jsonCopyFailed: "Could not copy JSON. Please copy manually.",
+        jsonImportEmpty: "Paste a JSON to import.",
+        invalidJson: "Invalid JSON.",
+        importedOk: "Configuration imported successfully.",
+        defaultsRestored: "Defaults restored.",
+        colorAdded: "Color added.",
+        sizeAdded: "Size added.",
+        colorRenamed: "Color renamed.",
+        sizeRenamed: "Size renamed.",
+        colorDeleted: "Color deleted.",
+        sizeDeleted: "Size deleted.",
+        colorDuplicated: "Color duplicated.",
+        sizeDuplicated: "Size duplicated.",
+        colorExists: "That color already exists.",
+        sizeExists: "That size already exists.",
+        colorNameRequired: "Enter a color name.",
+        sizeNameRequired: "Enter a size name.",
+        oneColorMin: "At least one color must remain.",
+        oneSizeMin: "At least one size must remain.",
+        reviewValues: "Check boxes, stacks, and columns.",
+        enterPositive: "You must enter quantities greater than 0.",
+        pdfOk: "PDF exported successfully.",
+        pdfFail: "Could not export PDF.",
+        imageOk: "Image downloaded successfully.",
+        imageFail: "Could not download image.",
+        shareOk: "Plan shared successfully.",
+        shareMenu: "Share menu opened.",
+        shareFail: "Could not share the plan.",
+        shareNotSupported: "Your browser does not support file sharing. Please download the image.",
+        orderColors: "Color order",
+        orderSizes: "Size order",
+        smallestStack: "Smallest stack",
+        largestStack: "Largest stack",
+        difference: "Difference",
+        pieces: "Pieces",
+        colorMain: "Main color",
+        position: "Position",
+        empty: "Empty",
+        noStack: "No stack",
+        capacity: "Capacity",
+        visibleRow1: "Visible row 1",
+        visibleRow2: "Visible row 2",
+        visibleRow3: "Visible row 3",
+        visibleSizes: "Visible sizes",
+        visibleColors: "Visible colors",
+        missingSizes: "Missing sizes",
+        missingColors: "Missing colors",
+        allSizesVisible: "All sizes are visible",
+        allColorsVisible: "All colors are visible",
+        quickCheck: "Quick check",
+        totalVisibleSizes: "Visible front sizes",
+        totalVisibleColors2: "Visible row 2 colors",
+        totalVisibleColors3: "Visible row 3 colors",
+        confirmDeleteColor: name => `Delete color "${name}"? Its quantities will also be removed.`,
+        confirmDeleteSize: name => `Delete size "${name}"? Its quantities will also be removed.`,
+        confirmRestore: "Restore all default values? Current saved changes will be lost.",
+        montageFor: name => `Display setup for ${name}`,
+        summaryDefault: "Display setup summary",
+        darkMode: "Dark mode",
+        lightMode: "Light mode",
+        lockEditing: "Lock editing",
+        unlockEditing: "Unlock editing",
+        editingLocked: "Editing is locked.",
+        editingUnlocked: "Editing unlocked.",
+        csvImported: "CSV imported successfully.",
+        csvMissingFile: "Please choose a CSV file.",
+        csvInvalid: "Invalid CSV format."
+      },
+      es: {
+        appTitle: "Planner de Mesa",
+        appSubtitle: "Versión completa bilingüe con secuencia estricta color-talla, bloqueo, modo oscuro e importación CSV.",
+        store: "Tienda",
+        table: "Mesa",
+        date: "Fecha",
+        department: "Departamento / Temporada",
+        notes: "Notas",
+        boxes: "Cajas",
+        stacks: "Pilas",
+        columns: "Columnas del plano",
+        configRows: "Filas configurables",
+        row1: "Fila 1",
+        row2: "Fila 2",
+        row3: "Fila 3",
+        rest: "Resto",
+        sizes: "Tallas",
+        colors: "Colores",
+        sequential: "Secuencial",
+        manageColors: "Administrar colores",
+        manageSizes: "Administrar tallas",
+        name: "Nombre",
+        size: "Talla",
+        visualColor: "Color visual",
+        addColor: "Agregar color",
+        addSize: "Agregar talla",
+        sortLightDark: "Ordenar claro → oscuro",
+        importExportJson: "Importar / Exportar JSON",
+        json: "JSON",
+        exportJson: "Exportar JSON",
+        copyJson: "Copiar JSON",
+        importJson: "Importar JSON",
+        importCsv: "Importar CSV",
+        csvFile: "Archivo CSV",
+        importCsvBtn: "Importar CSV",
+        downloadCsvTemplate: "Descargar plantilla CSV",
+        csvHelp: "Formato esperado: primera columna = color, columnas siguientes = tallas.",
+        currentColorOrder: "Orden actual de colores:",
+        generatePlan: "Generar plano",
+        save: "Guardar",
+        exportPdf: "Exportar PDF",
+        downloadImage: "Descargar imagen",
+        share: "Compartir",
+        print: "Imprimir",
+        restoreDefaults: "Restaurar iniciales",
+        generalSummary: "Resumen general",
+        displayCheck: "Chequeo de exhibición",
+        sizeLegend: "Leyenda de tallas",
+        tablePlan: "Plano de mesa",
+        footerNote: "Punto = color de prenda. Etiqueta = color de talla.",
+        generatedOk: "Plano generado correctamente.",
+        savedOk: "Datos guardados.",
+        jsonGenerated: "JSON generado.",
+        jsonCopied: "JSON copiado al portapapeles.",
+        jsonCopyFailed: "No se pudo copiar el JSON. Cópialo manualmente.",
+        jsonImportEmpty: "Pega un JSON para importar.",
+        invalidJson: "JSON inválido.",
+        importedOk: "Configuración importada correctamente.",
+        defaultsRestored: "Valores iniciales restaurados.",
+        colorAdded: "Color agregado.",
+        sizeAdded: "Talla agregada.",
+        colorRenamed: "Color renombrado.",
+        sizeRenamed: "Talla renombrada.",
+        colorDeleted: "Color eliminado.",
+        sizeDeleted: "Talla eliminada.",
+        colorDuplicated: "Color duplicado.",
+        sizeDuplicated: "Talla duplicada.",
+        colorExists: "Ese color ya existe.",
+        sizeExists: "Esa talla ya existe.",
+        colorNameRequired: "Escribe un nombre para el color.",
+        sizeNameRequired: "Escribe un nombre para la talla.",
+        oneColorMin: "Debe quedar al menos un color.",
+        oneSizeMin: "Debe quedar al menos una talla.",
+        reviewValues: "Revisa cajas, pilas y columnas.",
+        enterPositive: "Debes ingresar cantidades mayores que 0.",
+        pdfOk: "PDF exportado correctamente.",
+        pdfFail: "No se pudo exportar el PDF.",
+        imageOk: "Imagen descargada correctamente.",
+        imageFail: "No se pudo descargar la imagen.",
+        shareOk: "Plano compartido correctamente.",
+        shareMenu: "Se abrió el menú de compartir.",
+        shareFail: "No se pudo compartir el plano.",
+        shareNotSupported: "Tu navegador no soporta compartir archivos. Usa descargar imagen.",
+        orderColors: "Orden colores",
+        orderSizes: "Orden tallas",
+        smallestStack: "Menor pila",
+        largestStack: "Mayor pila",
+        difference: "Diferencia",
+        pieces: "Piezas",
+        colorMain: "Color principal",
+        position: "Posición",
+        empty: "Vacía",
+        noStack: "Sin pila",
+        capacity: "Capacidad",
+        visibleRow1: "Fila 1 visible",
+        visibleRow2: "Fila 2 visible",
+        visibleRow3: "Fila 3 visible",
+        visibleSizes: "Tallas visibles",
+        visibleColors: "Colores visibles",
+        missingSizes: "Faltan tallas",
+        missingColors: "Faltan colores",
+        allSizesVisible: "Están visibles todas las tallas",
+        allColorsVisible: "Están visibles todos los colores",
+        quickCheck: "Control rápido",
+        totalVisibleSizes: "Total tallas frente",
+        totalVisibleColors2: "Total colores fila 2",
+        totalVisibleColors3: "Total colores fila 3",
+        confirmDeleteColor: name => `¿Eliminar el color "${name}"? También se eliminarán sus cantidades de la tabla.`,
+        confirmDeleteSize: name => `¿Eliminar la talla "${name}"? También se eliminarán sus cantidades de la tabla.`,
+        confirmRestore: "¿Restaurar todos los valores iniciales? Se perderán los cambios guardados actualmente.",
+        montageFor: name => `Montaje de exhibición para ${name}`,
+        summaryDefault: "Resumen del montaje de exhibición",
+        darkMode: "Modo oscuro",
+        lightMode: "Modo claro",
+        lockEditing: "Bloquear edición",
+        unlockEditing: "Desbloquear edición",
+        editingLocked: "La edición está bloqueada.",
+        editingUnlocked: "Edición desbloqueada.",
+        csvImported: "CSV importado correctamente.",
+        csvMissingFile: "Selecciona un archivo CSV.",
+        csvInvalid: "Formato CSV inválido."
+      }
+    };
+
+    let currentLang = "en";
+    let darkMode = false;
+    let editLocked = false;
+
+    const DEFAULT_STATE = {
+      language: "en",
+      darkMode: false,
+      editLocked: false,
+      storeName: "",
+      tableName: "",
+      planDate: "",
+      departmentName: "",
+      planNotes: "",
+      numBoxes: "10",
+      numStacks: "12",
+      planColumns: "4",
+      configRows: "3",
+      rowRule0: "sizes",
+      rowRule1: "colors",
+      rowRule2: "colors",
+      rowRuleRest: "sequential",
+      colors: [
+        { nombre: "White", hex: "#f8fafc" },
+        { nombre: "Yellow", hex: "#eab308" },
+        { nombre: "Green", hex: "#16a34a" },
+        { nombre: "Blue", hex: "#2563eb" },
+        { nombre: "Red", hex: "#dc2626" },
+        { nombre: "Black", hex: "#111111" }
+      ],
+      sizes: [
+        { nombre: "XS", hex: "#c084fc" },
+        { nombre: "S", hex: "#facc15" },
+        { nombre: "M", hex: "#ef4444" },
+        { nombre: "L", hex: "#3b82f6" },
+        { nombre: "XL", hex: "#22c55e" },
+        { nombre: "XXL", hex: "#f97316" }
+      ],
+      tableData: {}
+    };
+
+    let SIZES = JSON.parse(JSON.stringify(DEFAULT_STATE.sizes));
+    let COLORS = JSON.parse(JSON.stringify(DEFAULT_STATE.colors));
+    let tableData = {};
+
+    function t(key, ...args){
+      const value = I18N[currentLang][key];
+      if(typeof value === "function") return value(...args);
+      return value ?? key;
+    }
+
+    function displayColorName(name){
+      return BASE_COLOR_TRANSLATIONS[name]?.[currentLang] || name;
+    }
+
+    function setLanguage(lang){
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      document.getElementById("languageSelect").value = lang;
+      applyTranslations();
+      renderManagers();
+      createTable();
+      renderCurrentOrder();
+      renderSizeLegend();
+      updateHeader();
+      saveStateSilent();
+    }
+
+    function applyTranslations(){
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        el.textContent = t(key);
+      });
+
+      const selects = ["rowRule0","rowRule1","rowRule2","rowRuleRest"];
+      selects.forEach(id => {
+        const sel = document.getElementById(id);
+        [...sel.options].forEach(opt => {
+          const key = opt.value === "sizes" ? "sizes" :
+                      opt.value === "colors" ? "colors" : "sequential";
+          opt.textContent = t(key);
+        });
+      });
+
+      document.getElementById("storeName").placeholder = currentLang === "es" ? "Nombre de tienda" : "Store name";
+      document.getElementById("tableName").placeholder = currentLang === "es" ? "Nombre de mesa" : "Table name";
+      document.getElementById("departmentName").placeholder = currentLang === "es" ? "Departamento / Temporada" : "Department / Season";
+      document.getElementById("planNotes").placeholder = currentLang === "es" ? "Notas adicionales..." : "Additional notes...";
+      document.getElementById("newColorName").placeholder = currentLang === "es" ? "Beige" : "Beige";
+      document.getElementById("newSizeName").placeholder = currentLang === "es" ? "XXXL" : "XXXL";
+      document.getElementById("jsonConfig").placeholder = currentLang === "es" ? "Pega aquí la configuración JSON" : "Paste configuration JSON here";
+
+      updateThemeButtons();
+    }
+
+    function updateThemeButtons(){
+      document.getElementById("darkModeBtn").textContent = darkMode ? t("lightMode") : t("darkMode");
+      document.getElementById("lockBtn").textContent = editLocked ? t("unlockEditing") : t("lockEditing");
+      document.getElementById("lockBanner").textContent = t("editingLocked");
+    }
+
+    function toggleDarkMode(){
+      darkMode = !darkMode;
+      document.body.classList.toggle("dark", darkMode);
+      updateThemeButtons();
+      saveStateSilent();
+    }
+
+    function toggleEditLock(){
+      editLocked = !editLocked;
+      document.body.classList.toggle("locked", editLocked);
+      updateThemeButtons();
+      setMessage(editLocked ? t("editingLocked") : t("editingUnlocked"), "ok");
+      saveStateSilent();
+    }
+
+    function sizeNames(){ return SIZES.map(s => s.nombre); }
+    function colorNames(){ return COLORS.map(c => c.nombre); }
+
+    function colorHex(name){
+      const found = COLORS.find(c => c.nombre === name);
+      return found ? found.hex : "#94a3b8";
+    }
+
+    function sizeHex(name){
+      const found = SIZES.find(s => s.nombre === name);
+      return found ? found.hex : "#94a3b8";
+    }
+
+    function sizeTextColor(name){
+      const hex = sizeHex(name).replace("#","");
+      if(hex.length !== 6) return "#111827";
+      const r = parseInt(hex.substr(0,2),16);
+      const g = parseInt(hex.substr(2,2),16);
+      const b = parseInt(hex.substr(4,2),16);
+      const yiq = ((r*299)+(g*587)+(b*114))/1000;
+      return yiq >= 140 ? "#111827" : "#ffffff";
+    }
+
+    function dataKey(color, size){
+      return `${color}__${size}`;
+    }
+
+    function setMessage(text, type="ok"){
+      document.getElementById("message").innerHTML = `<div class="msg ${type}">${text}</div>`;
+    }
+
+    function saveTempTableData(){
+      const inputs = document.querySelectorAll(".cell-input");
+      inputs.forEach(input => {
+        tableData[dataKey(input.dataset.color, input.dataset.size)] = input.value;
+      });
+    }
+
+    function cleanOrphanData(){
+      const validColors = new Set(colorNames());
+      const validSizes = new Set(sizeNames());
+      const cleaned = {};
+      Object.keys(tableData).forEach(key => {
+        const [color, size] = key.split("__");
+        if(validColors.has(color) && validSizes.has(size)){
+          cleaned[key] = tableData[key];
+        }
+      });
+      tableData = cleaned;
+    }
+
+    function renameColorKeys(oldName, newName){
+      const next = {};
+      Object.keys(tableData).forEach(key => {
+        const [color, size] = key.split("__");
+        const c = color === oldName ? newName : color;
+        next[`${c}__${size}`] = tableData[key];
+      });
+      tableData = next;
+    }
+
+    function renameSizeKeys(oldName, newName){
+      const next = {};
+      Object.keys(tableData).forEach(key => {
+        const [color, size] = key.split("__");
+        const s = size === oldName ? newName : size;
+        next[`${color}__${s}`] = tableData[key];
+      });
+      tableData = next;
+    }
+
+    function stateIds(){
+      return [
+        "storeName","tableName","planDate","departmentName","planNotes",
+        "numBoxes","numStacks","planColumns","configRows",
+        "rowRule0","rowRule1","rowRule2","rowRuleRest"
+      ];
+    }
+
+    function getCurrentState(){
+      saveTempTableData();
+      cleanOrphanData();
+      const state = {
+        language: currentLang,
+        darkMode,
+        editLocked,
+        colors: COLORS,
+        sizes: SIZES,
+        tableData
+      };
+      stateIds().forEach(id => {
+        state[id] = document.getElementById(id).value;
+      });
+      return state;
+    }
+
+    function saveStateSilent(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(getCurrentState()));
+    }
+
+    function saveStateManual(){
+      saveStateSilent();
+      setMessage(t("savedOk"), "ok");
+    }
+
+    function applyState(state){
+      stateIds().forEach(id => {
+        if(state[id] !== undefined && document.getElementById(id)){
+          document.getElementById(id).value = state[id];
+        }
+      });
+      if(Array.isArray(state.colors) && state.colors.length) COLORS = state.colors;
+      if(Array.isArray(state.sizes) && state.sizes.length) SIZES = state.sizes;
+      tableData = state.tableData || {};
+      if(state.language) currentLang = state.language;
+      darkMode = !!state.darkMode;
+      editLocked = !!state.editLocked;
+      cleanOrphanData();
+    }
+
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw){
+        if(!document.getElementById("planDate").value){
+          document.getElementById("planDate").value = new Date().toISOString().slice(0,10);
+        }
+        return;
+      }
+      try{
+        const state = JSON.parse(raw);
+        applyState(state);
+      }catch(e){}
+    }
+
+    function exportConfigJSON(){
+      const state = getCurrentState();
+      document.getElementById("jsonConfig").value = JSON.stringify(state, null, 2);
+      setMessage(t("jsonGenerated"), "ok");
+    }
+
+    async function copyConfigJSON(){
+      exportConfigJSON();
+      try{
+        await navigator.clipboard.writeText(document.getElementById("jsonConfig").value);
+        setMessage(t("jsonCopied"), "ok");
+      }catch(e){
+        setMessage(t("jsonCopyFailed"), "warn");
+      }
+    }
+
+    function importConfigJSON(){
+      const raw = document.getElementById("jsonConfig").value.trim();
+      if(!raw){
+        setMessage(t("jsonImportEmpty"), "warn");
+        return;
+      }
+
+      try{
+        const state = JSON.parse(raw);
+        if(!Array.isArray(state.colors) || !state.colors.length){
+          setMessage(t("invalidJson"), "warn");
+          return;
+        }
+        if(!Array.isArray(state.sizes) || !state.sizes.length){
+          setMessage(t("invalidJson"), "warn");
+          return;
+        }
+
+        applyState(state);
+        document.body.classList.toggle("dark", darkMode);
+        document.body.classList.toggle("locked", editLocked);
+        document.getElementById("languageSelect").value = currentLang;
+        applyTranslations();
+        rebuildAll();
+        setMessage(t("importedOk"), "ok");
+      }catch(e){
+        setMessage(t("invalidJson"), "warn");
+      }
+    }
+
+    function restoreDefaults(){
+      if(!confirm(t("confirmRestore"))){
+        return;
+      }
+      localStorage.removeItem(STORAGE_KEY);
+      SIZES = JSON.parse(JSON.stringify(DEFAULT_STATE.sizes));
+      COLORS = JSON.parse(JSON.stringify(DEFAULT_STATE.colors));
+      tableData = {};
+      applyState(DEFAULT_STATE);
+      document.body.classList.toggle("dark", darkMode);
+      document.body.classList.toggle("locked", editLocked);
+      if(!document.getElementById("planDate").value){
+        document.getElementById("planDate").value = new Date().toISOString().slice(0,10);
+      }
+      document.getElementById("jsonConfig").value = "";
+      document.getElementById("stats").innerHTML = "";
+      document.getElementById("summaryText").innerHTML = "";
+      document.getElementById("displayCheck").innerHTML = "";
+      document.getElementById("sizeLegend").innerHTML = "";
+      document.getElementById("realTable").innerHTML = "";
+      document.getElementById("languageSelect").value = currentLang;
+      applyTranslations();
+      rebuildAll();
+      updateHeader();
+      setMessage(t("defaultsRestored"), "ok");
+    }
+
+    function renderCurrentOrder(){
+      document.getElementById("currentOrder").innerHTML = colorNames().map(displayColorName).join(" → ");
+    }
+
+    function lightness(hex){
+      const clean = String(hex || "").replace("#","");
+      if(clean.length !== 6) return 0;
+      const r = parseInt(clean.substr(0,2),16);
+      const g = parseInt(clean.substr(2,2),16);
+      const b = parseInt(clean.substr(4,2),16);
+      return (0.2126*r + 0.7152*g + 0.0722*b);
+    }
+
+    function sortColorsByLightness(){
+      saveTempTableData();
+      COLORS.sort((a,b) => lightness(b.hex) - lightness(a.hex));
+      rebuildAll();
+    }
+
+    function renderManagers(){
+      const colorList = document.getElementById("colorList");
+      colorList.innerHTML = COLORS.map((c, i) => `
+        <div class="manager-item">
+          <span class="dot" style="background:${c.hex}"></span>
+          <input type="text" value="${c.nombre}" onchange="renameColor(${i}, this.value)" style="max-width:180px;">
+          <div style="font-size:12px;color:var(--muted);min-width:80px;">${displayColorName(c.nombre)}</div>
+          <input type="color" value="${c.hex}" onchange="updateColorHex(${i}, this.value)" style="width:56px;padding:4px;">
+          <div class="manager-actions">
+            <button class="btn-small" onclick="moveColor(${i}, -1)">↑</button>
+            <button class="btn-small" onclick="moveColor(${i}, 1)">↓</button>
+            <button class="btn-small btn-secondary" onclick="duplicateColor(${i})">⧉</button>
+            <button class="btn-small btn-danger" onclick="deleteColor(${i})">✕</button>
+          </div>
+        </div>
+      `).join("");
+
+      const sizeList = document.getElementById("sizeList");
+      sizeList.innerHTML = SIZES.map((s, i) => `
+        <div class="manager-item">
+          <span class="size-badge" style="background:${s.hex};color:${sizeTextColor(s.nombre)}">${s.nombre}</span>
+          <input type="text" value="${s.nombre}" onchange="renameSize(${i}, this.value)" style="max-width:180px;">
+          <input type="color" value="${s.hex}" onchange="updateSizeHex(${i}, this.value)" style="width:56px;padding:4px;">
+          <div class="manager-actions">
+            <button class="btn-small" onclick="moveSize(${i}, -1)">↑</button>
+            <button class="btn-small" onclick="moveSize(${i}, 1)">↓</button>
+            <button class="btn-small btn-secondary" onclick="duplicateSize(${i})">⧉</button>
+            <button class="btn-small btn-danger" onclick="deleteSize(${i})">✕</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function normalize(txt){
+      return String(txt || "").trim();
+    }
+
+    function availableName(base, existing){
+      let name = base;
+      let i = 2;
+      while(existing.some(x => x.toLowerCase() === name.toLowerCase())){
+        name = `${base} ${i}`;
+        i++;
+      }
+      return name;
+    }
+
+    function addColor(){
+      const name = normalize(document.getElementById("newColorName").value);
+      const hex = document.getElementById("newColorHex").value || "#d6c2a1";
+
+      if(!name){
+        setMessage(t("colorNameRequired"), "warn");
+        return;
+      }
+      if(COLORS.some(c => c.nombre.toLowerCase() === name.toLowerCase())){
+        setMessage(t("colorExists"), "warn");
+        return;
+      }
+
+      COLORS.push({ nombre: name, hex });
+      document.getElementById("newColorName").value = "";
+      rebuildAll();
+      setMessage(t("colorAdded"), "ok");
+    }
+
+    function renameColor(index, newNameRaw){
+      const newName = normalize(newNameRaw);
+      const current = COLORS[index].nombre;
+
+      if(!newName){
+        renderManagers();
+        setMessage(t("colorNameRequired"), "warn");
+        return;
+      }
+      if(COLORS.some((c, i) => i !== index && c.nombre.toLowerCase() === newName.toLowerCase())){
+        renderManagers();
+        setMessage(t("colorExists"), "warn");
+        return;
+      }
+      if(newName === current) return;
+
+      saveTempTableData();
+      COLORS[index].nombre = newName;
+      renameColorKeys(current, newName);
+      rebuildAll();
+      setMessage(t("colorRenamed"), "ok");
+    }
+
+    function duplicateColor(index){
+      const original = COLORS[index];
+      const name = availableName(`${original.nombre} copy`, colorNames());
+      COLORS.splice(index + 1, 0, { nombre: name, hex: original.hex });
+
+      SIZES.forEach(s => {
+        const oldKey = dataKey(original.nombre, s.nombre);
+        const newKey = dataKey(name, s.nombre);
+        tableData[newKey] = tableData[oldKey] ?? "0";
+      });
+
+      rebuildAll();
+      setMessage(t("colorDuplicated"), "ok");
+    }
+
+    function deleteColor(index){
+      if(COLORS.length <= 1){
+        setMessage(t("oneColorMin"), "warn");
+        return;
+      }
+      const name = COLORS[index].nombre;
+      if(!confirm(t("confirmDeleteColor", name))){
+        return;
+      }
+      saveTempTableData();
+      COLORS.splice(index, 1);
+      cleanOrphanData();
+      rebuildAll();
+      setMessage(t("colorDeleted"), "ok");
+    }
+
+    function updateColorHex(index, hex){
+      COLORS[index].hex = hex;
+      renderManagers();
+      createTable();
+      renderCurrentOrder();
+      saveStateSilent();
+    }
+
+    function moveColor(index, dir){
+      saveTempTableData();
+      const next = index + dir;
+      if(next < 0 || next >= COLORS.length) return;
+      [COLORS[index], COLORS[next]] = [COLORS[next], COLORS[index]];
+      rebuildAll(false);
+    }
+
+    function addSize(){
+      const name = normalize(document.getElementById("newSizeName").value);
+      const hex = document.getElementById("newSizeHex").value || "#a78bfa";
+
+      if(!name){
+        setMessage(t("sizeNameRequired"), "warn");
+        return;
+      }
+      if(SIZES.some(s => s.nombre.toLowerCase() === name.toLowerCase())){
+        setMessage(t("sizeExists"), "warn");
+        return;
+      }
+
+      SIZES.push({ nombre: name, hex });
+      document.getElementById("newSizeName").value = "";
+      rebuildAll();
+      setMessage(t("sizeAdded"), "ok");
+    }
+
+    function renameSize(index, newNameRaw){
+      const newName = normalize(newNameRaw);
+      const current = SIZES[index].nombre;
+
+      if(!newName){
+        renderManagers();
+        setMessage(t("sizeNameRequired"), "warn");
+        return;
+      }
+      if(SIZES.some((s, i) => i !== index && s.nombre.toLowerCase() === newName.toLowerCase())){
+        renderManagers();
+        setMessage(t("sizeExists"), "warn");
+        return;
+      }
+      if(newName === current) return;
+
+      saveTempTableData();
+      SIZES[index].nombre = newName;
+      renameSizeKeys(current, newName);
+      rebuildAll();
+      setMessage(t("sizeRenamed"), "ok");
+    }
+
+    function duplicateSize(index){
+      const original = SIZES[index];
+      const name = availableName(`${original.nombre} copy`, sizeNames());
+      SIZES.splice(index + 1, 0, { nombre: name, hex: original.hex });
+
+      COLORS.forEach(c => {
+        const oldKey = dataKey(c.nombre, original.nombre);
+        const newKey = dataKey(c.nombre, name);
+        tableData[newKey] = tableData[oldKey] ?? "0";
+      });
+
+      rebuildAll();
+      setMessage(t("sizeDuplicated"), "ok");
+    }
+
+    function deleteSize(index){
+      if(SIZES.length <= 1){
+        setMessage(t("oneSizeMin"), "warn");
+        return;
+      }
+      const name = SIZES[index].nombre;
+      if(!confirm(t("confirmDeleteSize", name))){
+        return;
+      }
+      saveTempTableData();
+      SIZES.splice(index, 1);
+      cleanOrphanData();
+      rebuildAll();
+      setMessage(t("sizeDeleted"), "ok");
+    }
+
+    function updateSizeHex(index, hex){
+      SIZES[index].hex = hex;
+      renderManagers();
+      renderSizeLegend();
+      createTable();
+      saveStateSilent();
+    }
+
+    function moveSize(index, dir){
+      saveTempTableData();
+      const next = index + dir;
+      if(next < 0 || next >= SIZES.length) return;
+      [SIZES[index], SIZES[next]] = [SIZES[next], SIZES[index]];
+      rebuildAll(false);
+    }
+
+    function createTable(){
+      const thead = document.getElementById("tableHead");
+      const tbody = document.getElementById("tableBody");
+
+      thead.innerHTML = `
+        <tr>
+          <th>${t("colors")}</th>
+          ${SIZES.map(s => `<th>${s.nombre}</th>`).join("")}
+        </tr>
+      `;
+
+      tbody.innerHTML = "";
+
+      COLORS.forEach(color => {
+        const tr = document.createElement("tr");
+        let html = `<td><span class="dot" style="background:${color.hex}"></span> ${displayColorName(color.nombre)} <span style="color:var(--muted);font-size:12px;">(${color.nombre})</span></td>`;
+
+        SIZES.forEach(size => {
+          const key = dataKey(color.nombre, size.nombre);
+          const value = tableData[key] !== undefined ? tableData[key] : "0";
+          html += `
+            <td>
+              <input class="cell-input auto-save" type="number" min="0" value="${value}"
+                data-color="${color.nombre}" data-size="${size.nombre}">
+            </td>
+          `;
+        });
+
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+
+      connectAutoSave();
+    }
+
+    function connectAutoSave(){
+      document.querySelectorAll("input, select, textarea").forEach(el => {
+        el.removeEventListener("change", autoSaveHandler);
+        el.removeEventListener("input", autoSaveHandler);
+        el.addEventListener("change", autoSaveHandler);
+        el.addEventListener("input", autoSaveHandler);
+      });
+    }
+
+    function autoSaveHandler(){
+      saveStateSilent();
+      updateHeader();
+    }
+
+    function readInventory(numBoxes){
+      const inputs = document.querySelectorAll(".cell-input");
+      const inv = {};
+      COLORS.forEach(c => {
+        inv[c.nombre] = {};
+        SIZES.forEach(s => inv[c.nombre][s.nombre] = 0);
+      });
+
+      inputs.forEach(input => {
+        const perBox = parseInt(input.value || "0", 10);
+        if(perBox > 0){
+          inv[input.dataset.color][input.dataset.size] = perBox * numBoxes;
+        }
+      });
+
+      return inv;
+    }
+
+    function totalInventory(inv){
+      let total = 0;
+      Object.values(inv).forEach(bySize => {
+        Object.values(bySize).forEach(q => total += q);
+      });
+      return total;
+    }
+
+    function calculateCapacities(totalPieces, numStacks){
+      const base = Math.floor(totalPieces / numStacks);
+      const remaining = totalPieces % numStacks;
+      return Array.from({ length: numStacks }, (_, i) => base + (i < remaining ? 1 : 0));
+    }
+
+    function generatePositions(numStacks, planColumns){
+      const rows = Math.ceil(numStacks / planColumns);
+      const positions = [];
+      let idx = 0;
+      for(let x = 0; x < planColumns; x++){
+        for(let y = 0; y < rows; y++){
+          if(idx < numStacks){
+            positions.push({ id: idx + 1, x, y });
+            idx++;
+          }
+        }
+      }
+      return { rows, positions };
+    }
+
+    function buildStrictSequence(inv){
+      const sequence = [];
+      for(const color of colorNames()){
+        for(const size of sizeNames()){
+          const qty = (inv[color] && inv[color][size]) ? inv[color][size] : 0;
+          for(let i = 0; i < qty; i++){
+            sequence.push({ color, size });
+          }
+        }
+      }
+      return sequence;
+    }
+
+    function optimizeVisibility(stacks, rows, columns){
+      for(let x = 0; x < columns; x++){
+        const columnStacks = [];
+        for(let y = 0; y < rows; y++){
+          const s = stacks.find(st => st.x === x && st.y === y);
+          if(s) columnStacks.push(s);
+        }
+
+        const visibleSizes = new Set();
+        for(const stack of columnStacks){
+          if(!stack.pieces.length) continue;
+          const currentVisible = stack.pieces[0].size;
+          if(!visibleSizes.has(currentVisible)){
+            visibleSizes.add(currentVisible);
+            continue;
+          }
+          const altIndex = stack.pieces.findIndex(p => !visibleSizes.has(p.size));
+          if(altIndex > 0){
+            const [piece] = stack.pieces.splice(altIndex, 1);
+            stack.pieces.unshift(piece);
+            visibleSizes.add(piece.size);
+          } else {
+            visibleSizes.add(currentVisible);
+          }
+        }
+      }
+    }
+
+    function buildCommercialStacks(invOriginal, numStacks, planColumns){
+      const inv = JSON.parse(JSON.stringify(invOriginal));
+      const totalPieces = totalInventory(inv);
+      const capacities = calculateCapacities(totalPieces, numStacks);
+      const { rows, positions } = generatePositions(numStacks, planColumns);
+
+      const stacks = positions.map((pos, i) => ({
+        id: pos.id,
+        x: pos.x,
+        y: pos.y,
+        capacity: capacities[i],
+        pieces: []
+      }));
+
+      const sequence = buildStrictSequence(inv);
+
+      let cursor = 0;
+      for(const stack of stacks.sort((a,b)=>a.id-b.id)){
+        while(stack.pieces.length < stack.capacity && cursor < sequence.length){
+          stack.pieces.push(sequence[cursor]);
+          cursor++;
+        }
+      }
+
+      optimizeVisibility(stacks, rows, planColumns);
+
+      return { stacks, capacities, rows, totalPieces };
+    }
+
+    function summarizeStack(stack){
+      const map = {};
+      stack.pieces.forEach(p => {
+        const key = `${p.color}|${p.size}`;
+        map[key] = (map[key] || 0) + 1;
+      });
+      return Object.entries(map);
+    }
+
+    function mainColor(stack){
+      const map = {};
+      stack.pieces.forEach(p => map[p.color] = (map[p.color] || 0) + 1);
+      const sorted = Object.entries(map).sort((a,b)=>b[1]-a[1]);
+      return sorted.length ? sorted[0][0] : "-";
+    }
+
+    function updateHeader(){
+      const store = document.getElementById("storeName").value.trim();
+      const table = document.getElementById("tableName").value.trim();
+      const date = document.getElementById("planDate").value;
+      const department = document.getElementById("departmentName").value.trim();
+      const notes = document.getElementById("planNotes").value.trim();
+
+      document.getElementById("headerTitle").textContent =
+        [store || t("appTitle"), table].filter(Boolean).join(" - ");
+
+      document.getElementById("headerSubtitle").textContent =
+        table ? t("montageFor", table) : t("summaryDefault");
+
+      document.getElementById("headerDate").textContent = date || "-";
+      document.getElementById("headerDepartment").textContent = department || "-";
+      document.getElementById("headerNotesView").textContent = notes ? `${t("notes")}: ${notes}` : "";
+    }
+
+    function renderStats(numBoxes, numStacks, totalPieces, capacities){
+      const max = Math.max(...capacities);
+      const min = Math.min(...capacities);
+
+      document.getElementById("stats").innerHTML = `
+        <div class="stat"><div class="k">${t("boxes")}</div><div class="v">${numBoxes}</div></div>
+        <div class="stat"><div class="k">${t("stacks")}</div><div class="v">${numStacks}</div></div>
+        <div class="stat"><div class="k">${t("pieces")}</div><div class="v">${totalPieces}</div></div>
+        <div class="stat"><div class="k">${t("smallestStack")}</div><div class="v">${min}</div></div>
+        <div class="stat"><div class="k">${t("largestStack")}</div><div class="v">${max}</div></div>
+        <div class="stat"><div class="k">${t("difference")}</div><div class="v">${max-min}</div></div>
+        <div class="stat"><div class="k">${t("sizes")}</div><div class="v">${SIZES.length}</div></div>
+        <div class="stat"><div class="k">${t("colors")}</div><div class="v">${COLORS.length}</div></div>
+      `;
+
+      document.getElementById("summaryText").innerHTML = `
+        <p><b>${t("orderColors")}:</b> ${colorNames().map(displayColorName).join(" → ")}</p>
+        <p><b>${t("orderSizes")}:</b> ${sizeNames().join(" → ")}</p>
+        <div class="msg ok">${t("generatedOk")}</div>
+      `;
+    }
+
+    function renderDisplayCheck(stacks){
+      const row1 = stacks.filter(s => s.y === 0);
+      const row2 = stacks.filter(s => s.y === 1);
+      const row3 = stacks.filter(s => s.y === 2);
+
+      const row1Sizes = new Set();
+      row1.forEach(s => s.pieces.slice(0,1).forEach(p => row1Sizes.add(p.size)));
+
+      const row2Colors = new Set();
+      row2.forEach(s => s.pieces.slice(0,1).forEach(p => row2Colors.add(p.color)));
+
+      const row3Colors = new Set();
+      row3.forEach(s => s.pieces.slice(0,1).forEach(p => row3Colors.add(p.color)));
+
+      const missingSizes = sizeNames().filter(s => !row1Sizes.has(s));
+      const missingRow2 = colorNames().filter(c => !row2Colors.has(c));
+      const missingRow3 = colorNames().filter(c => !row3Colors.has(c));
+
+      document.getElementById("displayCheck").innerHTML = `
+        <div class="check-box">
+          <h3>${t("visibleRow1")}</h3>
+          <div><b>${t("visibleSizes")}:</b> ${[...row1Sizes].join(", ") || "-"}</div>
+          <div class="msg ${missingSizes.length ? "warn" : "ok"}">
+            ${missingSizes.length ? `⚠ ${t("missingSizes")}: ${missingSizes.join(", ")}` : `✅ ${t("allSizesVisible")}`}
+          </div>
+        </div>
+        <div class="check-box">
+          <h3>${t("visibleRow2")}</h3>
+          <div><b>${t("visibleColors")}:</b> ${[...row2Colors].map(displayColorName).join(", ") || "-"}</div>
+          <div class="msg ${missingRow2.length ? "warn" : "ok"}">
+            ${missingRow2.length ? `⚠ ${t("missingColors")}: ${missingRow2.map(displayColorName).join(", ")}` : `✅ ${t("allColorsVisible")}`}
+          </div>
+        </div>
+        <div class="check-box">
+          <h3>${t("visibleRow3")}</h3>
+          <div><b>${t("visibleColors")}:</b> ${[...row3Colors].map(displayColorName).join(", ") || "-"}</div>
+          <div class="msg ${missingRow3.length ? "warn" : "ok"}">
+            ${missingRow3.length ? `⚠ ${t("missingColors")}: ${missingRow3.map(displayColorName).join(", ")}` : `✅ ${t("allColorsVisible")}`}
+          </div>
+        </div>
+        <div class="check-box">
+          <h3>${t("quickCheck")}</h3>
+          <div><b>${t("totalVisibleSizes")}:</b> ${row1Sizes.size}</div>
+          <div><b>${t("totalVisibleColors2")}:</b> ${row2Colors.size}</div>
+          <div><b>${t("totalVisibleColors3")}:</b> ${row3Colors.size}</div>
+        </div>
+      `;
+    }
+
+    function renderSizeLegend(){
+      const cont = document.getElementById("sizeLegend");
+      cont.innerHTML = SIZES.map(s => `
+        <div class="check-box">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="dot" style="background:${s.hex}"></span>
+            <span class="size-badge" style="background:${s.hex};color:${sizeTextColor(s.nombre)}">${s.nombre}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderTablePlan(stacks, planColumns, rows){
+      const table = document.getElementById("realTable");
+      table.innerHTML = "";
+      table.style.gridTemplateColumns = window.innerWidth < 700
+        ? `repeat(${Math.max(1, Math.min(planColumns, 2))}, minmax(160px, 1fr))`
+        : `repeat(${planColumns}, minmax(220px, 1fr))`;
+
+      const map = {};
+      stacks.forEach(s => map[`${s.x}_${s.y}`] = s);
+
+      for(let y = rows - 1; y >= 0; y--){
+        for(let x = 0; x < planColumns; x++){
+          const stack = map[`${x}_${y}`];
+          const div = document.createElement("div");
+          div.className = "pila";
+
+          if(!stack){
+            div.innerHTML = `
+              <div class="coords">${t("position")} (${x},${y})</div>
+              <h3>${t("empty")}</h3>
+              <div class="chip">${t("noStack")}</div>
+            `;
+            table.appendChild(div);
+            continue;
+          }
+
+          const principal = mainColor(stack);
+          const summary = summarizeStack(stack);
+
+          let html = `
+            <div class="coords">${t("position")} (${x},${y})</div>
+            <h3>${currentLang === "es" ? "Pila" : "Stack"} ${stack.id}</h3>
+            <div class="badge">${stack.pieces.length} ${t("pieces").toLowerCase()}</div>
+            <div class="badge">${t("capacity")} ${stack.capacity}</div>
+            <div style="font-size:13px;margin:8px 0;line-height:1.4;">
+              <span class="dot" style="background:${colorHex(principal)}"></span>
+              ${t("colorMain")}: <b>${displayColorName(principal)}</b>
+            </div>
+          `;
+
+          summary.forEach(([key, qty]) => {
+            const [color, size] = key.split("|");
+            html += `
+              <div class="chip">
+                <span class="dot" style="background:${colorHex(color)}" title="${displayColorName(color)}"></span>
+                <span class="size-badge"
+                      style="background:${sizeHex(size)};color:${sizeTextColor(size)}"
+                      title="${size}">
+                  ${size}
+                </span>
+                ${displayColorName(color)}: ${qty}
+              </div>
+            `;
+          });
+
+          div.innerHTML = html;
+          table.appendChild(div);
+        }
+      }
+    }
+
+    function generatePlan(){
+      saveStateSilent();
+      updateHeader();
+
+      const numBoxes = parseInt(document.getElementById("numBoxes").value, 10);
+      const numStacks = parseInt(document.getElementById("numStacks").value, 10);
+      const planColumns = parseInt(document.getElementById("planColumns").value, 10);
+
+      if(!numBoxes || !numStacks || !planColumns){
+        setMessage(t("reviewValues"), "warn");
+        return;
+      }
+
+      const inventory = readInventory(numBoxes);
+      const total = totalInventory(inventory);
+      if(total <= 0){
+        setMessage(t("enterPositive"), "warn");
+        return;
+      }
+
+      const { stacks, capacities, rows, totalPieces } = buildCommercialStacks(
+        inventory,
+        numStacks,
+        planColumns
+      );
+
+      renderStats(numBoxes, numStacks, totalPieces, capacities);
+      renderDisplayCheck(stacks);
+      renderSizeLegend();
+      renderTablePlan(stacks, planColumns, rows);
+      setMessage(t("generatedOk"), "ok");
+      saveStateSilent();
+    }
+
+    function parseCSV(text){
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      if(lines.length < 2) throw new Error("invalid");
+
+      const rows = lines.map(line => line.split(",").map(x => x.trim()));
+      const header = rows[0];
+      if(header.length < 2) throw new Error("invalid");
+
+      const sizeHeaders = header.slice(1);
+      const newSizes = sizeHeaders.map((name, idx) => ({
+        nombre: name || `Size ${idx+1}`,
+        hex: SIZES[idx]?.hex || "#a78bfa"
+      }));
+
+      const newColors = [];
+      const newTableData = {};
+
+      for(let i = 1; i < rows.length; i++){
+        const cols = rows[i];
+        const colorName = cols[0];
+        if(!colorName) continue;
+
+        newColors.push({
+          nombre: colorName,
+          hex: COLORS[i-1]?.hex || "#94a3b8"
+        });
+
+        sizeHeaders.forEach((sizeName, j) => {
+          const value = cols[j + 1] ?? "0";
+          newTableData[dataKey(colorName, sizeName)] = String(parseInt(value || "0", 10) || 0);
+        });
+      }
+
+      if(!newColors.length || !newSizes.length) throw new Error("invalid");
+
+      COLORS = newColors;
+      SIZES = newSizes;
+      tableData = newTableData;
+      cleanOrphanData();
+    }
+
+    function importCSVFile(){
+      const fileInput = document.getElementById("csvFile");
+      const file = fileInput.files[0];
+      if(!file){
+        setMessage(t("csvMissingFile"), "warn");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          parseCSV(String(reader.result || ""));
+          rebuildAll();
+          setMessage(t("csvImported"), "ok");
+        }catch(e){
+          setMessage(t("csvInvalid"), "warn");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function downloadCSVTemplate(){
+      const header = ["Color", ...sizeNames()].join(",");
+      const rows = COLORS.map(color => {
+        const values = SIZES.map(size => tableData[dataKey(color.nombre, size.nombre)] ?? "0");
+        return [color.nombre, ...values].join(",");
+      });
+      const csv = [header, ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "planner-template.csv";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    async function capturePlanCanvas() {
+      const area = document.getElementById("exportArea");
+      return await html2canvas(area, {
+        scale: 2,
+        backgroundColor: darkMode ? "#111827" : "#ffffff",
+        useCORS: true
+      });
+    }
+
+    async function exportPDF(){
+      try{
+        updateHeader();
+        const canvas = await capturePlanCanvas();
+        const imgData = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const pdfWidth = 210;
+        const pdfHeight = 297;
+        const margin = 10;
+        const usableWidth = pdfWidth - margin * 2;
+        const imgHeight = canvas.height * usableWidth / canvas.width;
+
+        let heightLeft = imgHeight;
+        let position = margin;
+
+        pdf.addImage(imgData, "PNG", margin, position, usableWidth, imgHeight);
+        heightLeft -= (pdfHeight - margin * 2);
+
+        while (heightLeft > 0) {
+          pdf.addPage();
+          position = margin - (imgHeight - heightLeft);
+          pdf.addImage(imgData, "PNG", margin, position, usableWidth, imgHeight);
+          heightLeft -= (pdfHeight - margin * 2);
+        }
+
+        pdf.save("planner-table.pdf");
+        setMessage(t("pdfOk"), "ok");
+      }catch(e){
+        setMessage(t("pdfFail"), "warn");
+      }
+    }
+
+    async function downloadImage(){
+      try{
+        updateHeader();
+        const canvas = await capturePlanCanvas();
+        const link = document.createElement("a");
+        link.download = "planner-table.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        setMessage(t("imageOk"), "ok");
+      }catch(e){
+        setMessage(t("imageFail"), "warn");
+      }
+    }
+
+    async function sharePlan(){
+      try{
+        updateHeader();
+        const canvas = await capturePlanCanvas();
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        const file = new File([blob], "planner-table.png", { type: "image/png" });
+
+        if(navigator.canShare && navigator.canShare({ files: [file] })){
+          await navigator.share({
+            title: t("appTitle"),
+            text: t("tablePlan"),
+            files: [file]
+          });
+          setMessage(t("shareOk"), "ok");
+        } else if(navigator.share){
+          await navigator.share({
+            title: t("appTitle"),
+            text: t("tablePlan")
+          });
+          setMessage(t("shareMenu"), "ok");
+        } else {
+          setMessage(t("shareNotSupported"), "warn");
+        }
+      }catch(e){
+        setMessage(t("shareFail"), "warn");
+      }
+    }
+
+    function rebuildAll(showMessage = false){
+      renderManagers();
+      createTable();
+      renderCurrentOrder();
+      renderSizeLegend();
+      updateHeader();
+      saveStateSilent();
+      if(showMessage) setMessage(t("generatedOk"), "ok");
+    }
+
+    window.addEventListener("resize", () => {
+      const table = document.getElementById("realTable");
+      if(table.children.length > 0) generatePlan();
+    });
+
+    applyState(DEFAULT_STATE);
+    loadState();
+    document.body.classList.toggle("dark", darkMode);
+    document.body.classList.toggle("locked", editLocked);
+    if(!document.getElementById("planDate").value){
+      document.getElementById("planDate").value = new Date().toISOString().slice(0,10);
+    }
+    document.getElementById("languageSelect").value = currentLang;
+    applyTranslations();
+    renderManagers();
+    createTable();
+    renderCurrentOrder();
+    renderSizeLegend();
+    updateHeader();
+    connectAutoSave();
+  </script>
+</body>
+</html>
