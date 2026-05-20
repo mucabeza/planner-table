@@ -24,6 +24,11 @@
       --warn:#92400e;
       --warnbg:#fffbeb;
       --shadow:0 4px 14px rgba(0,0,0,.06);
+
+      --soft-panel:#f8fafc;
+      --soft-panel-2:#f1f5f9;
+      --soft-blue:#eff6ff;
+      --soft-chip:#f8fafc;
     }
 
     body.dark{
@@ -41,6 +46,11 @@
       --warn:#fbbf24;
       --warnbg:#3f2b00;
       --shadow:0 8px 24px rgba(0,0,0,.28);
+
+      --soft-panel:#1f2937;
+      --soft-panel-2:#0f172a;
+      --soft-blue:#172554;
+      --soft-chip:#1f2937;
     }
 
     *{box-sizing:border-box}
@@ -71,7 +81,7 @@
       border:1px solid var(--line);
       border-radius:16px;
       padding:16px;
-      background:linear-gradient(180deg,var(--card) 0%, color-mix(in srgb, var(--card) 92%, #94a3b8 8%) 100%);
+      background:var(--card);
       margin-bottom:12px;
     }
 
@@ -178,7 +188,7 @@
       margin-top:10px;
       padding:10px;
       border:1px solid #93c5fd;
-      background:color-mix(in srgb, var(--card) 70%, #dbeafe 30%);
+      background:var(--soft-blue);
       border-radius:12px;
       font-size:14px;
       line-height:1.5;
@@ -199,7 +209,7 @@
       border:1px solid var(--line);
       border-radius:12px;
       padding:8px;
-      background:color-mix(in srgb, var(--card) 92%, #6b7280 8%);
+      background:var(--soft-panel);
       flex-wrap:wrap;
     }
 
@@ -251,7 +261,7 @@
     }
 
     th{
-      background:color-mix(in srgb, var(--card) 90%, #94a3b8 10%);
+      background:var(--soft-panel-2);
       font-weight:800;
       position:sticky;
       top:0;
@@ -289,7 +299,7 @@
     @media (max-width:520px){.stats{grid-template-columns:1fr}}
 
     .stat{
-      background:color-mix(in srgb, var(--card) 92%, #94a3b8 8%);
+      background:var(--soft-panel);
       border:1px solid var(--line);
       border-radius:14px;
       padding:12px;
@@ -306,8 +316,8 @@
       line-height:1.4;
     }
 
-    .ok{background:var(--okbg);color:var(--ok);border:1px solid color-mix(in srgb, var(--ok) 45%, #ffffff 55%)}
-    .warn{background:var(--warnbg);color:var(--warn);border:1px solid color-mix(in srgb, var(--warn) 45%, #ffffff 55%)}
+    .ok{background:var(--okbg);color:var(--ok);border:1px solid #86efac}
+    .warn{background:var(--warnbg);color:var(--warn);border:1px solid #fcd34d}
 
     .rows-rules{
       display:grid;
@@ -345,9 +355,9 @@
       display:inline-block;
       padding:4px 8px;
       border-radius:999px;
-      background:color-mix(in srgb, var(--card) 70%, #dbeafe 30%);
+      background:var(--soft-blue);
       color:var(--primary);
-      border:1px solid color-mix(in srgb, var(--primary) 30%, #ffffff 70%);
+      border:1px solid #bfdbfe;
       font-size:12px;
       font-weight:bold;
       margin-bottom:8px;
@@ -363,8 +373,40 @@
       padding:5px 9px;
       margin:4px 4px 0 0;
       font-size:12px;
-      background:color-mix(in srgb, var(--card) 92%, #94a3b8 8%);
+      background:var(--soft-chip);
       flex-wrap:wrap;
+    }
+
+    .stack-summary-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:8px;
+    }
+
+    .stack-summary-item{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      background:var(--soft-chip);
+      min-height:34px;
+    }
+
+    .stack-dot{
+      flex:0 0 16px;
+    }
+
+    .stack-size-badge{
+      flex:0 0 auto;
+    }
+
+    .stack-summary-text{
+      font-size:12px;
+      line-height:1.2;
+      word-break:break-word;
     }
 
     .check-grid{
@@ -379,7 +421,7 @@
       border:1px solid var(--line);
       border-radius:14px;
       padding:12px;
-      background:color-mix(in srgb, var(--card) 95%, #6b7280 5%);
+      background:var(--soft-panel);
     }
 
     .legend-grid{
@@ -415,7 +457,7 @@
       padding:10px 12px;
       border-radius:12px;
       margin-bottom:10px;
-      border:1px solid color-mix(in srgb, var(--warn) 35%, #ffffff 65%);
+      border:1px solid #fcd34d;
       background:var(--warnbg);
       color:var(--warn);
       font-size:14px;
@@ -427,6 +469,136 @@
       pointer-events:none;
       opacity:.72;
       user-select:none;
+    }
+
+    .collapse{
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      margin-top:12px;
+      background:var(--card);
+    }
+
+    .collapse-toggle{
+      width:100%;
+      text-align:left;
+      padding:14px 16px;
+      background:var(--soft-panel);
+      color:var(--text);
+      border:none;
+      border-bottom:1px solid var(--line);
+      font-size:16px;
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .collapse-toggle span:last-child{
+      font-size:14px;
+      opacity:.8;
+    }
+
+    .collapse-content{
+      padding:14px;
+      display:block;
+    }
+
+    .collapse.closed .collapse-content{
+      display:none;
+    }
+
+    .mobile-editor{
+      display:none;
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:var(--card);
+      padding:12px;
+    }
+
+    .mobile-color-header{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+
+    .mobile-size-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    .mobile-size-row{
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--soft-panel);
+      padding:12px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      align-items:center;
+    }
+
+    .mobile-size-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .mobile-input-actions{
+      display:grid;
+      grid-template-columns:64px 1fr 64px 64px;
+      gap:8px;
+      align-items:center;
+    }
+
+    .mobile-size-input{
+      width:100%;
+      text-align:center;
+      font-size:18px;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--text);
+    }
+
+    .mobile-mini-btn{
+      padding:12px 8px;
+      border-radius:12px;
+      font-size:16px;
+      font-weight:800;
+      width:100%;
+    }
+
+    .mobile-nav{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .mobile-nav button{
+      flex:1;
+    }
+
+    .mobile-tools{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    @media (max-width:820px){
+      .desktop-matrix{
+        display:none;
+      }
+      .mobile-editor{
+        display:block;
+      }
     }
 
     #exportArea{background:transparent}
@@ -542,9 +714,12 @@
           </div>
         </div>
 
-        <div class="grid-2" style="margin-top:12px;">
-          <div class="card" style="margin:0;box-shadow:none;border:1px solid var(--line);">
-            <h2 style="margin-top:0;" data-i18n="manageColors">Manage colors</h2>
+        <div class="collapse" id="collapseColors">
+          <button type="button" class="collapse-toggle" onclick="toggleCollapse('collapseColors')">
+            <span data-i18n="manageColors">Manage colors</span>
+            <span id="collapseColorsIcon">−</span>
+          </button>
+          <div class="collapse-content">
             <div class="grid-3">
               <div>
                 <label for="newColorName" data-i18n="name">Name</label>
@@ -563,9 +738,14 @@
             </div>
             <div id="colorList" class="list-manager"></div>
           </div>
+        </div>
 
-          <div class="card" style="margin:0;box-shadow:none;border:1px solid var(--line);">
-            <h2 style="margin-top:0;" data-i18n="manageSizes">Manage sizes</h2>
+        <div class="collapse" id="collapseSizes">
+          <button type="button" class="collapse-toggle" onclick="toggleCollapse('collapseSizes')">
+            <span data-i18n="manageSizes">Manage sizes</span>
+            <span id="collapseSizesIcon">−</span>
+          </button>
+          <div class="collapse-content">
             <div class="grid-3">
               <div>
                 <label for="newSizeName" data-i18n="size">Size</label>
@@ -583,37 +763,47 @@
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px;box-shadow:none;border:1px solid var(--line);">
-          <h2 style="margin-top:0;" data-i18n="importExportJson">Import / Export JSON</h2>
-          <div class="grid-2">
-            <div>
-              <label for="jsonConfig" data-i18n="json">JSON</label>
-              <textarea id="jsonConfig" placeholder="Paste configuration JSON here"></textarea>
-            </div>
-            <div>
-              <div class="row-btns" style="margin-top:0;">
-                <button class="btn-secondary" onclick="exportConfigJSON()" data-i18n="exportJson">Export JSON</button>
-                <button class="btn-secondary" onclick="copyConfigJSON()" data-i18n="copyJson">Copy JSON</button>
-                <button onclick="importConfigJSON()" data-i18n="importJson">Import JSON</button>
+        <div class="collapse" id="collapseJson">
+          <button type="button" class="collapse-toggle" onclick="toggleCollapse('collapseJson')">
+            <span data-i18n="importExportJson">Import / Export JSON</span>
+            <span id="collapseJsonIcon">−</span>
+          </button>
+          <div class="collapse-content">
+            <div class="grid-2">
+              <div>
+                <label for="jsonConfig" data-i18n="json">JSON</label>
+                <textarea id="jsonConfig" placeholder="Paste configuration JSON here"></textarea>
+              </div>
+              <div>
+                <div class="row-btns" style="margin-top:0;">
+                  <button class="btn-secondary" onclick="exportConfigJSON()" data-i18n="exportJson">Export JSON</button>
+                  <button class="btn-secondary" onclick="copyConfigJSON()" data-i18n="copyJson">Copy JSON</button>
+                  <button onclick="importConfigJSON()" data-i18n="importJson">Import JSON</button>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px;box-shadow:none;border:1px solid var(--line);">
-          <h2 style="margin-top:0;" data-i18n="importCsv">Import CSV</h2>
-          <div class="grid-2">
-            <div>
-              <label for="csvFile" data-i18n="csvFile">CSV file</label>
-              <input type="file" id="csvFile" accept=".csv,text/csv">
-            </div>
-            <div>
-              <div class="row-btns" style="margin-top:28px;">
-                <button onclick="importCSVFile()" data-i18n="importCsvBtn">Import CSV</button>
-                <button class="btn-secondary" onclick="downloadCSVTemplate()" data-i18n="downloadCsvTemplate">Download CSV template</button>
+        <div class="collapse" id="collapseCsv">
+          <button type="button" class="collapse-toggle" onclick="toggleCollapse('collapseCsv')">
+            <span data-i18n="importCsv">Import CSV</span>
+            <span id="collapseCsvIcon">−</span>
+          </button>
+          <div class="collapse-content">
+            <div class="grid-2">
+              <div>
+                <label for="csvFile" data-i18n="csvFile">CSV file</label>
+                <input type="file" id="csvFile" accept=".csv,text/csv">
               </div>
-              <div class="help" data-i18n="csvHelp">
-                Expected format: first column = color, next columns = sizes.
+              <div>
+                <div class="row-btns" style="margin-top:28px;">
+                  <button onclick="importCSVFile()" data-i18n="importCsvBtn">Import CSV</button>
+                  <button class="btn-secondary" onclick="downloadCSVTemplate()" data-i18n="downloadCsvTemplate">Download CSV template</button>
+                </div>
+                <div class="help" data-i18n="csvHelp">
+                  Expected format: first column = color, next columns = sizes.
+                </div>
               </div>
             </div>
           </div>
@@ -624,7 +814,26 @@
           <div id="currentOrder"></div>
         </div>
 
-        <div class="table-wrap">
+        <div class="mobile-editor" id="mobileEditor">
+          <div class="mobile-color-header">
+            <label for="mobileColorSelect" style="margin:0;font-weight:800;">Color</label>
+            <select id="mobileColorSelect" onchange="renderMobileEditor()"></select>
+          </div>
+
+          <div class="mobile-tools">
+            <button type="button" class="btn-secondary" onclick="copyPreviousColor()">Copy previous</button>
+            <button type="button" class="btn-danger" onclick="clearCurrentColor()">Clear color</button>
+          </div>
+
+          <div id="mobileEditorGrid" class="mobile-size-grid"></div>
+
+          <div class="mobile-nav">
+            <button type="button" class="btn-secondary" onclick="mobilePrevColor()">◀</button>
+            <button type="button" class="btn-secondary" onclick="mobileNextColor()">▶</button>
+          </div>
+        </div>
+
+        <div class="table-wrap desktop-matrix">
           <table>
             <thead id="tableHead"></thead>
             <tbody id="tableBody"></tbody>
@@ -693,7 +902,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "planner_table_complete_no_front_selector_Version2";
+    const STORAGE_KEY = "planner_table_complete_no_front_selector_Version7";
 
     const BASE_COLOR_TRANSLATIONS = {
       White: { en: "White", es: "Blanco" },
@@ -708,252 +917,125 @@
       en: {
         appTitle: "Table Planner",
         appSubtitle: "Complete bilingual planner with strict color-size sequence, lock mode, dark mode, and CSV import.",
-        store: "Store",
-        table: "Table",
-        date: "Date",
-        department: "Department / Season",
-        notes: "Notes",
-        boxes: "Boxes",
-        stacks: "Stacks",
-        columns: "Plan columns",
-        configRows: "Configurable rows",
-        row1: "Row 1",
-        row2: "Row 2",
-        row3: "Row 3",
-        rest: "Rest",
-        sizes: "Sizes",
-        colors: "Colors",
-        sequential: "Sequential",
-        manageColors: "Manage colors",
-        manageSizes: "Manage sizes",
-        name: "Name",
-        size: "Size",
-        visualColor: "Visual color",
-        addColor: "Add color",
-        addSize: "Add size",
-        sortLightDark: "Sort light → dark",
-        importExportJson: "Import / Export JSON",
-        json: "JSON",
-        exportJson: "Export JSON",
-        copyJson: "Copy JSON",
-        importJson: "Import JSON",
-        importCsv: "Import CSV",
-        csvFile: "CSV file",
-        importCsvBtn: "Import CSV",
+        store: "Store", table: "Table", date: "Date", department: "Department / Season", notes: "Notes",
+        boxes: "Boxes", stacks: "Stacks", columns: "Plan columns", configRows: "Configurable rows",
+        row1: "Row 1", row2: "Row 2", row3: "Row 3", rest: "Rest",
+        sizes: "Sizes", colors: "Colors", sequential: "Sequential",
+        manageColors: "Manage colors", manageSizes: "Manage sizes", name: "Name", size: "Size",
+        visualColor: "Visual color", addColor: "Add color", addSize: "Add size",
+        sortLightDark: "Sort light → dark", importExportJson: "Import / Export JSON", json: "JSON",
+        exportJson: "Export JSON", copyJson: "Copy JSON", importJson: "Import JSON",
+        importCsv: "Import CSV", csvFile: "CSV file", importCsvBtn: "Import CSV",
         downloadCsvTemplate: "Download CSV template",
         csvHelp: "Expected format: first column = color, next columns = sizes.",
-        currentColorOrder: "Current color order:",
-        generatePlan: "Generate plan",
-        save: "Save",
-        exportPdf: "Export PDF",
-        downloadImage: "Download image",
-        share: "Share",
-        print: "Print",
-        restoreDefaults: "Restore defaults",
-        generalSummary: "General summary",
-        displayCheck: "Display check",
-        sizeLegend: "Size legend",
-        tablePlan: "Table plan",
+        currentColorOrder: "Current color order:", generatePlan: "Generate plan", save: "Save",
+        exportPdf: "Export PDF", downloadImage: "Download image", share: "Share", print: "Print",
+        restoreDefaults: "Restore defaults", generalSummary: "General summary",
+        displayCheck: "Display check", sizeLegend: "Size legend", tablePlan: "Table plan",
         footerNote: "Dot = garment color. Badge = size color.",
-        generatedOk: "Plan generated successfully.",
-        savedOk: "Data saved.",
-        jsonGenerated: "JSON generated.",
-        jsonCopied: "JSON copied to clipboard.",
+        generatedOk: "Plan generated successfully.", savedOk: "Data saved.",
+        jsonGenerated: "JSON generated.", jsonCopied: "JSON copied to clipboard.",
         jsonCopyFailed: "Could not copy JSON. Please copy manually.",
-        jsonImportEmpty: "Paste a JSON to import.",
-        invalidJson: "Invalid JSON.",
-        importedOk: "Configuration imported successfully.",
-        defaultsRestored: "Defaults restored.",
-        colorAdded: "Color added.",
-        sizeAdded: "Size added.",
-        colorRenamed: "Color renamed.",
-        sizeRenamed: "Size renamed.",
-        colorDeleted: "Color deleted.",
-        sizeDeleted: "Size deleted.",
-        colorDuplicated: "Color duplicated.",
-        sizeDuplicated: "Size duplicated.",
-        colorExists: "That color already exists.",
-        sizeExists: "That size already exists.",
-        colorNameRequired: "Enter a color name.",
-        sizeNameRequired: "Enter a size name.",
-        oneColorMin: "At least one color must remain.",
-        oneSizeMin: "At least one size must remain.",
+        jsonImportEmpty: "Paste a JSON to import.", invalidJson: "Invalid JSON.",
+        importedOk: "Configuration imported successfully.", defaultsRestored: "Defaults restored.",
+        colorAdded: "Color added.", sizeAdded: "Size added.",
+        colorRenamed: "Color renamed.", sizeRenamed: "Size renamed.",
+        colorDeleted: "Color deleted.", sizeDeleted: "Size deleted.",
+        colorDuplicated: "Color duplicated.", sizeDuplicated: "Size duplicated.",
+        colorExists: "That color already exists.", sizeExists: "That size already exists.",
+        colorNameRequired: "Enter a color name.", sizeNameRequired: "Enter a size name.",
+        oneColorMin: "At least one color must remain.", oneSizeMin: "At least one size must remain.",
         reviewValues: "Check boxes, stacks, and columns.",
         enterPositive: "You must enter quantities greater than 0.",
-        pdfOk: "PDF exported successfully.",
-        pdfFail: "Could not export PDF.",
-        imageOk: "Image downloaded successfully.",
-        imageFail: "Could not download image.",
-        shareOk: "Plan shared successfully.",
-        shareMenu: "Share menu opened.",
+        pdfOk: "PDF exported successfully.", pdfFail: "Could not export PDF.",
+        imageOk: "Image generated successfully.",
+        imageFail: "Could not download image. Please use Share if your browser blocks downloads.",
+        shareOk: "Plan shared successfully.", shareMenu: "Share menu opened.",
         shareFail: "Could not share the plan.",
         shareNotSupported: "Your browser does not support file sharing. Please download the image.",
-        orderColors: "Color order",
-        orderSizes: "Size order",
-        smallestStack: "Smallest stack",
-        largestStack: "Largest stack",
-        difference: "Difference",
-        pieces: "Pieces",
-        colorMain: "Main color",
-        position: "Position",
-        empty: "Empty",
-        noStack: "No stack",
-        capacity: "Capacity",
-        visibleRow1: "Visible row 1",
-        visibleRow2: "Visible row 2",
-        visibleRow3: "Visible row 3",
-        visibleSizes: "Visible sizes",
-        visibleColors: "Visible colors",
-        missingSizes: "Missing sizes",
-        missingColors: "Missing colors",
-        allSizesVisible: "All sizes are visible",
-        allColorsVisible: "All colors are visible",
-        quickCheck: "Quick check",
-        totalVisibleSizes: "Visible front sizes",
-        totalVisibleColors2: "Visible row 2 colors",
-        totalVisibleColors3: "Visible row 3 colors",
+        orderColors: "Color order", orderSizes: "Size order",
+        smallestStack: "Smallest stack", largestStack: "Largest stack", difference: "Difference",
+        pieces: "Pieces", colorMain: "Main color", position: "Position", empty: "Empty",
+        noStack: "No stack", capacity: "Capacity",
+        visibleRow1: "Visible row 1", visibleRow2: "Visible row 2", visibleRow3: "Visible row 3",
+        visibleSizes: "Visible sizes", visibleColors: "Visible colors",
+        missingSizes: "Missing sizes", missingColors: "Missing colors",
+        allSizesVisible: "All sizes are visible", allColorsVisible: "All colors are visible",
+        quickCheck: "Quick check", totalVisibleSizes: "Visible front sizes",
+        totalVisibleColors2: "Visible row 2 colors", totalVisibleColors3: "Visible row 3 colors",
         confirmDeleteColor: name => `Delete color "${name}"? Its quantities will also be removed.`,
         confirmDeleteSize: name => `Delete size "${name}"? Its quantities will also be removed.`,
         confirmRestore: "Restore all default values? Current saved changes will be lost.",
-        montageFor: name => `Display setup for ${name}`,
-        summaryDefault: "Display setup summary",
-        darkMode: "Dark mode",
-        lightMode: "Light mode",
-        lockEditing: "Lock editing",
-        unlockEditing: "Unlock editing",
-        editingLocked: "Editing is locked.",
-        editingUnlocked: "Editing unlocked.",
-        csvImported: "CSV imported successfully.",
-        csvMissingFile: "Please choose a CSV file.",
-        csvInvalid: "Invalid CSV format."
+        montageFor: name => `Display setup for ${name}`, summaryDefault: "Display setup summary",
+        darkMode: "Dark mode", lightMode: "Light mode", lockEditing: "Lock editing",
+        unlockEditing: "Unlock editing", editingLocked: "Editing is locked.",
+        editingUnlocked: "Editing unlocked.", csvImported: "CSV imported successfully.",
+        csvMissingFile: "Please choose a CSV file.", csvInvalid: "Invalid CSV format."
       },
       es: {
         appTitle: "Planner de Mesa",
         appSubtitle: "Versión completa bilingüe con secuencia estricta color-talla, bloqueo, modo oscuro e importación CSV.",
-        store: "Tienda",
-        table: "Mesa",
-        date: "Fecha",
-        department: "Departamento / Temporada",
-        notes: "Notas",
-        boxes: "Cajas",
-        stacks: "Pilas",
-        columns: "Columnas del plano",
-        configRows: "Filas configurables",
-        row1: "Fila 1",
-        row2: "Fila 2",
-        row3: "Fila 3",
-        rest: "Resto",
-        sizes: "Tallas",
-        colors: "Colores",
-        sequential: "Secuencial",
-        manageColors: "Administrar colores",
-        manageSizes: "Administrar tallas",
-        name: "Nombre",
-        size: "Talla",
-        visualColor: "Color visual",
-        addColor: "Agregar color",
-        addSize: "Agregar talla",
-        sortLightDark: "Ordenar claro → oscuro",
-        importExportJson: "Importar / Exportar JSON",
-        json: "JSON",
-        exportJson: "Exportar JSON",
-        copyJson: "Copiar JSON",
-        importJson: "Importar JSON",
-        importCsv: "Importar CSV",
-        csvFile: "Archivo CSV",
-        importCsvBtn: "Importar CSV",
+        store: "Tienda", table: "Mesa", date: "Fecha", department: "Departamento / Temporada", notes: "Notas",
+        boxes: "Cajas", stacks: "Pilas", columns: "Columnas del plano", configRows: "Filas configurables",
+        row1: "Fila 1", row2: "Fila 2", row3: "Fila 3", rest: "Resto",
+        sizes: "Tallas", colors: "Colores", sequential: "Secuencial",
+        manageColors: "Administrar colores", manageSizes: "Administrar tallas", name: "Nombre", size: "Talla",
+        visualColor: "Color visual", addColor: "Agregar color", addSize: "Agregar talla",
+        sortLightDark: "Ordenar claro → oscuro", importExportJson: "Importar / Exportar JSON", json: "JSON",
+        exportJson: "Exportar JSON", copyJson: "Copiar JSON", importJson: "Importar JSON",
+        importCsv: "Importar CSV", csvFile: "Archivo CSV", importCsvBtn: "Importar CSV",
         downloadCsvTemplate: "Descargar plantilla CSV",
         csvHelp: "Formato esperado: primera columna = color, columnas siguientes = tallas.",
-        currentColorOrder: "Orden actual de colores:",
-        generatePlan: "Generar plano",
-        save: "Guardar",
-        exportPdf: "Exportar PDF",
-        downloadImage: "Descargar imagen",
-        share: "Compartir",
-        print: "Imprimir",
-        restoreDefaults: "Restaurar iniciales",
-        generalSummary: "Resumen general",
-        displayCheck: "Chequeo de exhibición",
-        sizeLegend: "Leyenda de tallas",
-        tablePlan: "Plano de mesa",
+        currentColorOrder: "Orden actual de colores:", generatePlan: "Generar plano", save: "Guardar",
+        exportPdf: "Exportar PDF", downloadImage: "Descargar imagen", share: "Compartir", print: "Imprimir",
+        restoreDefaults: "Restaurar iniciales", generalSummary: "Resumen general",
+        displayCheck: "Chequeo de exhibición", sizeLegend: "Leyenda de tallas", tablePlan: "Plano de mesa",
         footerNote: "Punto = color de prenda. Etiqueta = color de talla.",
-        generatedOk: "Plano generado correctamente.",
-        savedOk: "Datos guardados.",
-        jsonGenerated: "JSON generado.",
-        jsonCopied: "JSON copiado al portapapeles.",
+        generatedOk: "Plano generado correctamente.", savedOk: "Datos guardados.",
+        jsonGenerated: "JSON generado.", jsonCopied: "JSON copiado al portapapeles.",
         jsonCopyFailed: "No se pudo copiar el JSON. Cópialo manualmente.",
-        jsonImportEmpty: "Pega un JSON para importar.",
-        invalidJson: "JSON inválido.",
-        importedOk: "Configuración importada correctamente.",
-        defaultsRestored: "Valores iniciales restaurados.",
-        colorAdded: "Color agregado.",
-        sizeAdded: "Talla agregada.",
-        colorRenamed: "Color renombrado.",
-        sizeRenamed: "Talla renombrada.",
-        colorDeleted: "Color eliminado.",
-        sizeDeleted: "Talla eliminada.",
-        colorDuplicated: "Color duplicado.",
-        sizeDuplicated: "Talla duplicada.",
-        colorExists: "Ese color ya existe.",
-        sizeExists: "Esa talla ya existe.",
-        colorNameRequired: "Escribe un nombre para el color.",
-        sizeNameRequired: "Escribe un nombre para la talla.",
-        oneColorMin: "Debe quedar al menos un color.",
-        oneSizeMin: "Debe quedar al menos una talla.",
+        jsonImportEmpty: "Pega un JSON para importar.", invalidJson: "JSON inválido.",
+        importedOk: "Configuración importada correctamente.", defaultsRestored: "Valores iniciales restaurados.",
+        colorAdded: "Color agregado.", sizeAdded: "Talla agregada.",
+        colorRenamed: "Color renombrado.", sizeRenamed: "Talla renombrada.",
+        colorDeleted: "Color eliminado.", sizeDeleted: "Talla eliminada.",
+        colorDuplicated: "Color duplicado.", sizeDuplicated: "Talla duplicada.",
+        colorExists: "Ese color ya existe.", sizeExists: "Esa talla ya existe.",
+        colorNameRequired: "Escribe un nombre para el color.", sizeNameRequired: "Escribe un nombre para la talla.",
+        oneColorMin: "Debe quedar al menos un color.", oneSizeMin: "Debe quedar al menos una talla.",
         reviewValues: "Revisa cajas, pilas y columnas.",
         enterPositive: "Debes ingresar cantidades mayores que 0.",
-        pdfOk: "PDF exportado correctamente.",
-        pdfFail: "No se pudo exportar el PDF.",
-        imageOk: "Imagen descargada correctamente.",
-        imageFail: "No se pudo descargar la imagen.",
-        shareOk: "Plano compartido correctamente.",
-        shareMenu: "Se abrió el menú de compartir.",
+        pdfOk: "PDF exportado correctamente.", pdfFail: "No se pudo exportar el PDF.",
+        imageOk: "Imagen generada correctamente.",
+        imageFail: "No se pudo descargar la imagen. Usa Compartir si tu navegador bloquea descargas.",
+        shareOk: "Plano compartido correctamente.", shareMenu: "Se abrió el menú de compartir.",
         shareFail: "No se pudo compartir el plano.",
         shareNotSupported: "Tu navegador no soporta compartir archivos. Usa descargar imagen.",
-        orderColors: "Orden colores",
-        orderSizes: "Orden tallas",
-        smallestStack: "Menor pila",
-        largestStack: "Mayor pila",
-        difference: "Diferencia",
-        pieces: "Piezas",
-        colorMain: "Color principal",
-        position: "Posición",
-        empty: "Vacía",
-        noStack: "Sin pila",
-        capacity: "Capacidad",
-        visibleRow1: "Fila 1 visible",
-        visibleRow2: "Fila 2 visible",
-        visibleRow3: "Fila 3 visible",
-        visibleSizes: "Tallas visibles",
-        visibleColors: "Colores visibles",
-        missingSizes: "Faltan tallas",
-        missingColors: "Faltan colores",
-        allSizesVisible: "Están visibles todas las tallas",
-        allColorsVisible: "Están visibles todos los colores",
-        quickCheck: "Control rápido",
-        totalVisibleSizes: "Total tallas frente",
-        totalVisibleColors2: "Total colores fila 2",
-        totalVisibleColors3: "Total colores fila 3",
+        orderColors: "Orden colores", orderSizes: "Orden tallas",
+        smallestStack: "Menor pila", largestStack: "Mayor pila", difference: "Diferencia",
+        pieces: "Piezas", colorMain: "Color principal", position: "Posición", empty: "Vacía",
+        noStack: "Sin pila", capacity: "Capacidad",
+        visibleRow1: "Fila 1 visible", visibleRow2: "Fila 2 visible", visibleRow3: "Fila 3 visible",
+        visibleSizes: "Tallas visibles", visibleColors: "Colores visibles",
+        missingSizes: "Faltan tallas", missingColors: "Faltan colores",
+        allSizesVisible: "Están visibles todas las tallas", allColorsVisible: "Están visibles todos los colores",
+        quickCheck: "Control rápido", totalVisibleSizes: "Total tallas frente",
+        totalVisibleColors2: "Total colores fila 2", totalVisibleColors3: "Total colores fila 3",
         confirmDeleteColor: name => `¿Eliminar el color "${name}"? También se eliminarán sus cantidades de la tabla.`,
         confirmDeleteSize: name => `¿Eliminar la talla "${name}"? También se eliminarán sus cantidades de la tabla.`,
         confirmRestore: "¿Restaurar todos los valores iniciales? Se perderán los cambios guardados actualmente.",
-        montageFor: name => `Montaje de exhibición para ${name}`,
-        summaryDefault: "Resumen del montaje de exhibición",
-        darkMode: "Modo oscuro",
-        lightMode: "Modo claro",
-        lockEditing: "Bloquear edición",
-        unlockEditing: "Desbloquear edición",
-        editingLocked: "La edición está bloqueada.",
-        editingUnlocked: "Edición desbloqueada.",
-        csvImported: "CSV importado correctamente.",
-        csvMissingFile: "Selecciona un archivo CSV.",
-        csvInvalid: "Formato CSV inválido."
+        montageFor: name => `Montaje de exhibición para ${name}`, summaryDefault: "Resumen del montaje de exhibición",
+        darkMode: "Modo oscuro", lightMode: "Modo claro", lockEditing: "Bloquear edición",
+        unlockEditing: "Desbloquear edición", editingLocked: "La edición está bloqueada.",
+        editingUnlocked: "Edición desbloqueada.", csvImported: "CSV importado correctamente.",
+        csvMissingFile: "Selecciona un archivo CSV.", csvInvalid: "Formato CSV inválido."
       }
     };
 
     let currentLang = "en";
     let darkMode = false;
     let editLocked = false;
+    let mobileColorIndex = 0;
 
     const DEFAULT_STATE = {
       language: "en",
@@ -1014,6 +1096,7 @@
       createTable();
       renderCurrentOrder();
       renderSizeLegend();
+      renderMobileEditor();
       updateHeader();
       saveStateSilent();
     }
@@ -1038,8 +1121,8 @@
       document.getElementById("tableName").placeholder = currentLang === "es" ? "Nombre de mesa" : "Table name";
       document.getElementById("departmentName").placeholder = currentLang === "es" ? "Departamento / Temporada" : "Department / Season";
       document.getElementById("planNotes").placeholder = currentLang === "es" ? "Notas adicionales..." : "Additional notes...";
-      document.getElementById("newColorName").placeholder = currentLang === "es" ? "Beige" : "Beige";
-      document.getElementById("newSizeName").placeholder = currentLang === "es" ? "XXXL" : "XXXL";
+      document.getElementById("newColorName").placeholder = "Beige";
+      document.getElementById("newSizeName").placeholder = "XXXL";
       document.getElementById("jsonConfig").placeholder = currentLang === "es" ? "Pega aquí la configuración JSON" : "Paste configuration JSON here";
 
       updateThemeButtons();
@@ -1049,6 +1132,28 @@
       document.getElementById("darkModeBtn").textContent = darkMode ? t("lightMode") : t("darkMode");
       document.getElementById("lockBtn").textContent = editLocked ? t("unlockEditing") : t("lockEditing");
       document.getElementById("lockBanner").textContent = t("editingLocked");
+    }
+
+    function toggleCollapse(id){
+      const box = document.getElementById(id);
+      box.classList.toggle("closed");
+      const icon = document.getElementById(id + "Icon");
+      if(icon) icon.textContent = box.classList.contains("closed") ? "+" : "−";
+    }
+
+    function initCollapses(){
+      const mobile = window.innerWidth <= 820;
+      ["collapseColors","collapseSizes","collapseJson","collapseCsv"].forEach(id => {
+        const box = document.getElementById(id);
+        const icon = document.getElementById(id + "Icon");
+        if(mobile){
+          box.classList.add("closed");
+          if(icon) icon.textContent = "+";
+        }else{
+          box.classList.remove("closed");
+          if(icon) icon.textContent = "−";
+        }
+      });
     }
 
     function toggleDarkMode(){
@@ -1100,6 +1205,11 @@
     function saveTempTableData(){
       const inputs = document.querySelectorAll(".cell-input");
       inputs.forEach(input => {
+        tableData[dataKey(input.dataset.color, input.dataset.size)] = input.value;
+      });
+
+      const mobileInputs = document.querySelectorAll(".mobile-size-input");
+      mobileInputs.forEach(input => {
         tableData[dataKey(input.dataset.color, input.dataset.size)] = input.value;
       });
     }
@@ -1156,9 +1266,7 @@
         sizes: SIZES,
         tableData
       };
-      stateIds().forEach(id => {
-        state[id] = document.getElementById(id).value;
-      });
+      stateIds().forEach(id => state[id] = document.getElementById(id).value);
       return state;
     }
 
@@ -1267,9 +1375,11 @@
       document.getElementById("sizeLegend").innerHTML = "";
       document.getElementById("realTable").innerHTML = "";
       document.getElementById("languageSelect").value = currentLang;
+      mobileColorIndex = 0;
       applyTranslations();
       rebuildAll();
       updateHeader();
+      initCollapses();
       setMessage(t("defaultsRestored"), "ok");
     }
 
@@ -1408,6 +1518,7 @@
       saveTempTableData();
       COLORS.splice(index, 1);
       cleanOrphanData();
+      mobileColorIndex = Math.max(0, Math.min(mobileColorIndex, COLORS.length - 1));
       rebuildAll();
       setMessage(t("colorDeleted"), "ok");
     }
@@ -1417,6 +1528,7 @@
       renderManagers();
       createTable();
       renderCurrentOrder();
+      renderMobileEditor();
       saveStateSilent();
     }
 
@@ -1505,6 +1617,7 @@
       SIZES[index].hex = hex;
       renderManagers();
       renderSizeLegend();
+      renderMobileEditor();
       createTable();
       saveStateSilent();
     }
@@ -1540,7 +1653,7 @@
           html += `
             <td>
               <input class="cell-input auto-save" type="number" min="0" value="${value}"
-                data-color="${color.nombre}" data-size="${size.nombre}">
+                data-color="${color.nombre}" data-size="${size.nombre}" onchange="syncValueFromDesktop(this)">
             </td>
           `;
         });
@@ -1550,6 +1663,135 @@
       });
 
       connectAutoSave();
+    }
+
+    function renderMobileEditor(){
+      const select = document.getElementById("mobileColorSelect");
+      const grid = document.getElementById("mobileEditorGrid");
+      if(!select || !grid) return;
+
+      if(mobileColorIndex >= COLORS.length) mobileColorIndex = 0;
+      if(mobileColorIndex < 0) mobileColorIndex = 0;
+
+      select.innerHTML = COLORS.map((c, i) => `
+        <option value="${i}" ${i === mobileColorIndex ? "selected" : ""}>${displayColorName(c.nombre)} (${c.nombre})</option>
+      `).join("");
+
+      mobileColorIndex = parseInt(select.value || "0", 10);
+      const color = COLORS[mobileColorIndex];
+      if(!color){
+        grid.innerHTML = "";
+        return;
+      }
+
+      grid.innerHTML = SIZES.map(size => {
+        const key = dataKey(color.nombre, size.nombre);
+        const value = tableData[key] !== undefined ? tableData[key] : "0";
+        return `
+          <div class="mobile-size-row">
+            <div class="mobile-size-left">
+              <span class="dot" style="background:${color.hex}"></span>
+              <span>${displayColorName(color.nombre)}</span>
+              <span class="size-badge" style="background:${size.hex};color:${sizeTextColor(size.nombre)}">${size.nombre}</span>
+            </div>
+
+            <div class="mobile-input-actions">
+              <button type="button" class="btn-secondary mobile-mini-btn" onclick="adjustMobileValue('${escapeJs(color.nombre)}','${escapeJs(size.nombre)}',-1)">-1</button>
+              <input class="mobile-size-input" type="number" min="0"
+                value="${value}"
+                data-color="${color.nombre}"
+                data-size="${size.nombre}"
+                onchange="syncValueFromMobile(this)"
+                inputmode="numeric">
+              <button type="button" class="btn-secondary mobile-mini-btn" onclick="adjustMobileValue('${escapeJs(color.nombre)}','${escapeJs(size.nombre)}',1)">+1</button>
+              <button type="button" class="btn-secondary mobile-mini-btn" onclick="adjustMobileValue('${escapeJs(color.nombre)}','${escapeJs(size.nombre)}',5)">+5</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function escapeJs(str){
+      return String(str).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    }
+
+    function mobilePrevColor(){
+      mobileColorIndex = Math.max(0, mobileColorIndex - 1);
+      renderMobileEditor();
+    }
+
+    function mobileNextColor(){
+      mobileColorIndex = Math.min(COLORS.length - 1, mobileColorIndex + 1);
+      renderMobileEditor();
+    }
+
+    function syncValueFromMobile(input){
+      const value = Math.max(0, parseInt(input.value || "0", 10) || 0);
+      input.value = value;
+      tableData[dataKey(input.dataset.color, input.dataset.size)] = String(value);
+      const desktop = document.querySelector(`.cell-input[data-color="${CSS.escape(input.dataset.color)}"][data-size="${CSS.escape(input.dataset.size)}"]`);
+      if(desktop) desktop.value = value;
+      saveStateSilent();
+    }
+
+    function syncValueFromDesktop(input){
+      const value = Math.max(0, parseInt(input.value || "0", 10) || 0);
+      input.value = value;
+      tableData[dataKey(input.dataset.color, input.dataset.size)] = String(value);
+      const mobile = document.querySelector(`.mobile-size-input[data-color="${CSS.escape(input.dataset.color)}"][data-size="${CSS.escape(input.dataset.size)}"]`);
+      if(mobile) mobile.value = value;
+      saveStateSilent();
+    }
+
+    function adjustMobileValue(color, size, delta){
+      const key = dataKey(color, size);
+      const current = Math.max(0, parseInt(tableData[key] || "0", 10) || 0);
+      const next = Math.max(0, current + delta);
+      tableData[key] = String(next);
+
+      const mobile = document.querySelector(`.mobile-size-input[data-color="${CSS.escape(color)}"][data-size="${CSS.escape(size)}"]`);
+      if(mobile) mobile.value = next;
+
+      const desktop = document.querySelector(`.cell-input[data-color="${CSS.escape(color)}"][data-size="${CSS.escape(size)}"]`);
+      if(desktop) desktop.value = next;
+
+      saveStateSilent();
+    }
+
+    function copyPreviousColor(){
+      if(mobileColorIndex <= 0){
+        return;
+      }
+      const fromColor = COLORS[mobileColorIndex - 1].nombre;
+      const toColor = COLORS[mobileColorIndex].nombre;
+
+      SIZES.forEach(size => {
+        const fromKey = dataKey(fromColor, size.nombre);
+        const toKey = dataKey(toColor, size.nombre);
+        tableData[toKey] = String(parseInt(tableData[fromKey] || "0", 10) || 0);
+
+        const desktop = document.querySelector(`.cell-input[data-color="${CSS.escape(toColor)}"][data-size="${CSS.escape(size.nombre)}"]`);
+        if(desktop) desktop.value = tableData[toKey];
+      });
+
+      renderMobileEditor();
+      saveStateSilent();
+    }
+
+    function clearCurrentColor(){
+      const color = COLORS[mobileColorIndex]?.nombre;
+      if(!color) return;
+
+      SIZES.forEach(size => {
+        const key = dataKey(color, size.nombre);
+        tableData[key] = "0";
+
+        const desktop = document.querySelector(`.cell-input[data-color="${CSS.escape(color)}"][data-size="${CSS.escape(size.nombre)}"]`);
+        if(desktop) desktop.value = "0";
+      });
+
+      renderMobileEditor();
+      saveStateSilent();
     }
 
     function connectAutoSave(){
@@ -1567,17 +1809,18 @@
     }
 
     function readInventory(numBoxes){
-      const inputs = document.querySelectorAll(".cell-input");
+      saveTempTableData();
       const inv = {};
       COLORS.forEach(c => {
         inv[c.nombre] = {};
         SIZES.forEach(s => inv[c.nombre][s.nombre] = 0);
       });
 
-      inputs.forEach(input => {
-        const perBox = parseInt(input.value || "0", 10);
-        if(perBox > 0){
-          inv[input.dataset.color][input.dataset.size] = perBox * numBoxes;
+      Object.keys(tableData).forEach(key => {
+        const [color, size] = key.split("__");
+        const perBox = parseInt(tableData[key] || "0", 10);
+        if(perBox > 0 && inv[color] && inv[color][size] !== undefined){
+          inv[color][size] = perBox * numBoxes;
         }
       });
 
@@ -1838,23 +2081,27 @@
               <span class="dot" style="background:${colorHex(principal)}"></span>
               ${t("colorMain")}: <b>${displayColorName(principal)}</b>
             </div>
+            <div class="stack-summary-list">
           `;
 
           summary.forEach(([key, qty]) => {
             const [color, size] = key.split("|");
+            const badgeBg = sizeHex(size);
+            const badgeText = sizeTextColor(size);
+
             html += `
-              <div class="chip">
-                <span class="dot" style="background:${colorHex(color)}" title="${displayColorName(color)}"></span>
-                <span class="size-badge"
-                      style="background:${sizeHex(size)};color:${sizeTextColor(size)}"
-                      title="${size}">
+              <div class="stack-summary-item">
+                <span class="dot stack-dot" style="background:${colorHex(color)}"></span>
+                <span class="size-badge stack-size-badge"
+                      style="background:${badgeBg}; color:${badgeText}; border:1px solid rgba(0,0,0,.18);">
                   ${size}
                 </span>
-                ${displayColorName(color)}: ${qty}
+                <span class="stack-summary-text">${displayColorName(color)} / ${size}: ${qty}</span>
               </div>
             `;
           });
 
+          html += `</div>`;
           div.innerHTML = html;
           table.appendChild(div);
         }
@@ -1933,6 +2180,7 @@
       COLORS = newColors;
       SIZES = newSizes;
       tableData = newTableData;
+      mobileColorIndex = 0;
       cleanOrphanData();
     }
 
@@ -1972,13 +2220,125 @@
       URL.revokeObjectURL(link.href);
     }
 
-    async function capturePlanCanvas() {
-      const area = document.getElementById("exportArea");
-      return await html2canvas(area, {
-        scale: 2,
-        backgroundColor: darkMode ? "#111827" : "#ffffff",
-        useCORS: true
+    function forceInlineStylesForExport(container){
+      const all = container.querySelectorAll("*");
+
+      all.forEach(el => {
+        const style = window.getComputedStyle(el);
+        el.style.color = style.color;
+        el.style.backgroundColor = style.backgroundColor;
+        el.style.borderColor = style.borderColor;
+        el.style.boxShadow = style.boxShadow;
+        el.style.opacity = style.opacity;
       });
+
+      container.querySelectorAll(".dot").forEach(dot => {
+        const bg = window.getComputedStyle(dot).backgroundColor;
+        dot.style.backgroundColor = bg;
+        dot.style.border = "1px solid #999";
+        dot.style.display = "inline-block";
+        dot.style.width = "16px";
+        dot.style.height = "16px";
+        dot.style.borderRadius = "999px";
+      });
+
+      container.querySelectorAll(".size-badge").forEach(el => {
+        const s = window.getComputedStyle(el);
+        el.style.backgroundColor = s.backgroundColor;
+        el.style.color = s.color;
+        el.style.border = "1px solid rgba(0,0,0,.18)";
+        el.style.display = "inline-flex";
+        el.style.alignItems = "center";
+        el.style.justifyContent = "center";
+        el.style.minWidth = "34px";
+        el.style.padding = "2px 8px";
+        el.style.borderRadius = "999px";
+        el.style.fontSize = "11px";
+        el.style.fontWeight = "700";
+        el.style.lineHeight = "1.2";
+      });
+
+      container.querySelectorAll(".badge").forEach(el => {
+        el.style.backgroundColor = darkMode ? "#172554" : "#eff6ff";
+        el.style.color = darkMode ? "#93c5fd" : "#1d4ed8";
+        el.style.border = darkMode ? "1px solid #1d4ed8" : "1px solid #bfdbfe";
+      });
+
+      container.querySelectorAll(".chip").forEach(el => {
+        el.style.backgroundColor = darkMode ? "#1f2937" : "#f8fafc";
+        el.style.border = `1px solid ${darkMode ? "#374151" : "#e5e7eb"}`;
+        el.style.display = "inline-flex";
+        el.style.alignItems = "center";
+        el.style.gap = "6px";
+        el.style.flexWrap = "wrap";
+      });
+
+      container.querySelectorAll(".stack-summary-item").forEach(el => {
+        el.style.display = "flex";
+        el.style.alignItems = "center";
+        el.style.gap = "8px";
+        el.style.padding = "6px 10px";
+        el.style.borderRadius = "999px";
+        el.style.backgroundColor = darkMode ? "#1f2937" : "#f8fafc";
+        el.style.border = `1px solid ${darkMode ? "#374151" : "#d1d5db"}`;
+        el.style.minHeight = "34px";
+      });
+
+      container.querySelectorAll(".stack-summary-text").forEach(el => {
+        el.style.fontSize = "12px";
+        el.style.lineHeight = "1.2";
+        el.style.color = darkMode ? "#e5e7eb" : "#111827";
+      });
+
+      container.querySelectorAll(".stack-summary-list").forEach(el => {
+        el.style.display = "flex";
+        el.style.flexDirection = "column";
+        el.style.gap = "8px";
+        el.style.marginTop = "8px";
+      });
+
+      container.querySelectorAll(".stat, .check-box, .manager-item").forEach(el => {
+        el.style.backgroundColor = darkMode ? "#1f2937" : "#f8fafc";
+        el.style.border = `1px solid ${darkMode ? "#374151" : "#e5e7eb"}`;
+      });
+
+      container.querySelectorAll(".header-export, .meta-box, .card, .pila, table, th, td").forEach(el => {
+        const s = window.getComputedStyle(el);
+        el.style.backgroundColor = s.backgroundColor;
+        el.style.color = s.color;
+        el.style.borderColor = s.borderColor;
+      });
+    }
+
+    async function capturePlanCanvas() {
+      const original = document.getElementById("exportArea");
+      const clone = original.cloneNode(true);
+
+      clone.style.position = "fixed";
+      clone.style.left = "-99999px";
+      clone.style.top = "0";
+      clone.style.width = original.offsetWidth + "px";
+      clone.style.background = darkMode ? "#111827" : "#ffffff";
+      clone.style.padding = "0";
+      clone.style.margin = "0";
+      clone.style.zIndex = "-1";
+
+      document.body.appendChild(clone);
+      forceInlineStylesForExport(clone);
+
+      try {
+        const canvas = await html2canvas(clone, {
+          scale: 2,
+          backgroundColor: darkMode ? "#111827" : "#ffffff",
+          useCORS: true,
+          logging: false
+        });
+        document.body.removeChild(clone);
+        return canvas;
+      } catch (err) {
+        document.body.removeChild(clone);
+        throw err;
+      }
     }
 
     async function exportPDF(){
@@ -2011,6 +2371,7 @@
         pdf.save("planner-table.pdf");
         setMessage(t("pdfOk"), "ok");
       }catch(e){
+        console.error(e);
         setMessage(t("pdfFail"), "warn");
       }
     }
@@ -2019,12 +2380,46 @@
       try{
         updateHeader();
         const canvas = await capturePlanCanvas();
+        const dataUrl = canvas.toDataURL("image/png");
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+        if(isIOS){
+          const win = window.open();
+          if(win){
+            win.document.write(`
+              <html>
+                <head>
+                  <title>planner-table.png</title>
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <style>
+                    body{margin:0;font-family:Arial;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh}
+                    img{max-width:100%;height:auto}
+                  </style>
+                </head>
+                <body>
+                  <img src="${dataUrl}" alt="planner-table">
+                </body>
+              </html>
+            `);
+            win.document.close();
+            setMessage(t("imageOk"), "ok");
+          } else {
+            setMessage(t("imageFail"), "warn");
+          }
+          return;
+        }
+
         const link = document.createElement("a");
         link.download = "planner-table.png";
-        link.href = canvas.toDataURL("image/png");
+        link.href = dataUrl;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
         setMessage(t("imageOk"), "ok");
       }catch(e){
+        console.error(e);
         setMessage(t("imageFail"), "warn");
       }
     }
@@ -2053,6 +2448,7 @@
           setMessage(t("shareNotSupported"), "warn");
         }
       }catch(e){
+        console.error(e);
         setMessage(t("shareFail"), "warn");
       }
     }
@@ -2062,12 +2458,14 @@
       createTable();
       renderCurrentOrder();
       renderSizeLegend();
+      renderMobileEditor();
       updateHeader();
       saveStateSilent();
       if(showMessage) setMessage(t("generatedOk"), "ok");
     }
 
     window.addEventListener("resize", () => {
+      initCollapses();
       const table = document.getElementById("realTable");
       if(table.children.length > 0) generatePlan();
     });
@@ -2085,8 +2483,10 @@
     createTable();
     renderCurrentOrder();
     renderSizeLegend();
+    renderMobileEditor();
     updateHeader();
     connectAutoSave();
+    initCollapses();
   </script>
 </body>
 </html>
