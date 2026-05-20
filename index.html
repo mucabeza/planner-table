@@ -24,7 +24,6 @@
       --warn:#92400e;
       --warnbg:#fffbeb;
       --shadow:0 4px 14px rgba(0,0,0,.06);
-
       --soft-panel:#f8fafc;
       --soft-panel-2:#f1f5f9;
       --soft-blue:#eff6ff;
@@ -46,7 +45,6 @@
       --warn:#fbbf24;
       --warnbg:#3f2b00;
       --shadow:0 8px 24px rgba(0,0,0,.28);
-
       --soft-panel:#1f2937;
       --soft-panel-2:#0f172a;
       --soft-blue:#172554;
@@ -395,18 +393,20 @@
       min-height:34px;
     }
 
-    .stack-dot{
-      flex:0 0 16px;
-    }
-
-    .stack-size-badge{
-      flex:0 0 auto;
-    }
-
+    .stack-dot{flex:0 0 16px}
+    .stack-size-badge{flex:0 0 auto}
     .stack-summary-text{
       font-size:12px;
       line-height:1.2;
       word-break:break-word;
+    }
+
+    .mobile-order{
+      display:none;
+      font-size:12px;
+      font-weight:800;
+      color:var(--primary);
+      margin-bottom:6px;
     }
 
     .check-grid{
@@ -448,9 +448,7 @@
       flex-wrap:wrap;
     }
 
-    .top-tools select{
-      max-width:240px;
-    }
+    .top-tools select{max-width:240px}
 
     .lock-banner{
       display:none;
@@ -504,9 +502,7 @@
       display:block;
     }
 
-    .collapse.closed .collapse-content{
-      display:none;
-    }
+    .collapse.closed .collapse-content{display:none}
 
     .mobile-editor{
       display:none;
@@ -581,9 +577,7 @@
       margin-top:10px;
     }
 
-    .mobile-nav button{
-      flex:1;
-    }
+    .mobile-nav button{flex:1}
 
     .mobile-tools{
       display:grid;
@@ -593,11 +587,47 @@
     }
 
     @media (max-width:820px){
-      .desktop-matrix{
-        display:none;
+      .desktop-matrix{display:none}
+      .mobile-editor{display:block}
+    }
+
+    @media (max-width:700px){
+      .mesa-real{
+        grid-template-columns:1fr !important;
+        gap:8px;
       }
-      .mobile-editor{
+
+      .pila{
+        min-height:auto;
+        padding:10px;
+      }
+
+      .mobile-order{
         display:block;
+      }
+
+      .badge{
+        font-size:11px;
+        padding:3px 7px;
+        margin-bottom:6px;
+      }
+
+      .stack-summary-item{
+        padding:5px 8px;
+        gap:6px;
+      }
+
+      .stack-summary-text{
+        font-size:11px;
+      }
+
+      .coords{
+        font-size:11px;
+      }
+
+      .pila h3{
+        font-size:15px;
+        margin-bottom:6px;
       }
     }
 
@@ -816,20 +846,20 @@
 
         <div class="mobile-editor" id="mobileEditor">
           <div class="mobile-color-header">
-            <label for="mobileColorSelect" style="margin:0;font-weight:800;">Color</label>
+            <label for="mobileColorSelect" style="margin:0;font-weight:800;" id="mobileColorLabel">Color</label>
             <select id="mobileColorSelect" onchange="renderMobileEditor()"></select>
           </div>
 
           <div class="mobile-tools">
-            <button type="button" class="btn-secondary" onclick="copyPreviousColor()">Copy previous</button>
-            <button type="button" class="btn-danger" onclick="clearCurrentColor()">Clear color</button>
+            <button type="button" class="btn-secondary" id="copyPreviousBtn" onclick="copyPreviousColor()">Copy previous</button>
+            <button type="button" class="btn-danger" id="clearColorBtn" onclick="clearCurrentColor()">Clear color</button>
           </div>
 
           <div id="mobileEditorGrid" class="mobile-size-grid"></div>
 
           <div class="mobile-nav">
-            <button type="button" class="btn-secondary" onclick="mobilePrevColor()">◀</button>
-            <button type="button" class="btn-secondary" onclick="mobileNextColor()">▶</button>
+            <button type="button" class="btn-secondary" id="prevColorBtn" onclick="mobilePrevColor()">◀ Prev</button>
+            <button type="button" class="btn-secondary" id="nextColorBtn" onclick="mobileNextColor()">Next ▶</button>
           </div>
         </div>
 
@@ -902,7 +932,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = "planner_table_complete_no_front_selector_Version7";
+    const STORAGE_KEY = "planner_table_complete_no_front_selector_Version7_1";
 
     const BASE_COLOR_TRANSLATIONS = {
       White: { en: "White", es: "Blanco" },
@@ -970,7 +1000,13 @@
         darkMode: "Dark mode", lightMode: "Light mode", lockEditing: "Lock editing",
         unlockEditing: "Unlock editing", editingLocked: "Editing is locked.",
         editingUnlocked: "Editing unlocked.", csvImported: "CSV imported successfully.",
-        csvMissingFile: "Please choose a CSV file.", csvInvalid: "Invalid CSV format."
+        csvMissingFile: "Please choose a CSV file.", csvInvalid: "Invalid CSV format.",
+        copyPrevious: "Copy previous",
+        clearColor: "Clear color",
+        prev: "◀ Prev",
+        next: "Next ▶",
+        mobileColor: "Color",
+        orderLabel: "Order"
       },
       es: {
         appTitle: "Planner de Mesa",
@@ -1028,7 +1064,13 @@
         darkMode: "Modo oscuro", lightMode: "Modo claro", lockEditing: "Bloquear edición",
         unlockEditing: "Desbloquear edición", editingLocked: "La edición está bloqueada.",
         editingUnlocked: "Edición desbloqueada.", csvImported: "CSV importado correctamente.",
-        csvMissingFile: "Selecciona un archivo CSV.", csvInvalid: "Formato CSV inválido."
+        csvMissingFile: "Selecciona un archivo CSV.", csvInvalid: "Formato CSV inválido.",
+        copyPrevious: "Copiar anterior",
+        clearColor: "Limpiar color",
+        prev: "◀ Anterior",
+        next: "Siguiente ▶",
+        mobileColor: "Color",
+        orderLabel: "Orden"
       }
     };
 
@@ -1087,6 +1129,20 @@
       return BASE_COLOR_TRANSLATIONS[name]?.[currentLang] || name;
     }
 
+    function updateMobileTexts(){
+      const mobileColorLabel = document.getElementById("mobileColorLabel");
+      const copyPreviousBtn = document.getElementById("copyPreviousBtn");
+      const clearColorBtn = document.getElementById("clearColorBtn");
+      const prevColorBtn = document.getElementById("prevColorBtn");
+      const nextColorBtn = document.getElementById("nextColorBtn");
+
+      if(mobileColorLabel) mobileColorLabel.textContent = t("mobileColor");
+      if(copyPreviousBtn) copyPreviousBtn.textContent = t("copyPrevious");
+      if(clearColorBtn) clearColorBtn.textContent = t("clearColor");
+      if(prevColorBtn) prevColorBtn.textContent = t("prev");
+      if(nextColorBtn) nextColorBtn.textContent = t("next");
+    }
+
     function setLanguage(lang){
       currentLang = lang;
       document.documentElement.lang = lang;
@@ -1126,6 +1182,7 @@
       document.getElementById("jsonConfig").placeholder = currentLang === "es" ? "Pega aquí la configuración JSON" : "Paste configuration JSON here";
 
       updateThemeButtons();
+      updateMobileTexts();
     }
 
     function updateThemeButtons(){
@@ -1203,13 +1260,11 @@
     }
 
     function saveTempTableData(){
-      const inputs = document.querySelectorAll(".cell-input");
-      inputs.forEach(input => {
+      document.querySelectorAll(".cell-input").forEach(input => {
         tableData[dataKey(input.dataset.color, input.dataset.size)] = input.value;
       });
 
-      const mobileInputs = document.querySelectorAll(".mobile-size-input");
-      mobileInputs.forEach(input => {
+      document.querySelectorAll(".mobile-size-input").forEach(input => {
         tableData[dataKey(input.dataset.color, input.dataset.size)] = input.value;
       });
     }
@@ -1452,16 +1507,11 @@
     function addColor(){
       const name = normalize(document.getElementById("newColorName").value);
       const hex = document.getElementById("newColorHex").value || "#d6c2a1";
-
-      if(!name){
-        setMessage(t("colorNameRequired"), "warn");
-        return;
-      }
+      if(!name){ setMessage(t("colorNameRequired"), "warn"); return; }
       if(COLORS.some(c => c.nombre.toLowerCase() === name.toLowerCase())){
         setMessage(t("colorExists"), "warn");
         return;
       }
-
       COLORS.push({ nombre: name, hex });
       document.getElementById("newColorName").value = "";
       rebuildAll();
@@ -1471,19 +1521,13 @@
     function renameColor(index, newNameRaw){
       const newName = normalize(newNameRaw);
       const current = COLORS[index].nombre;
-
-      if(!newName){
-        renderManagers();
-        setMessage(t("colorNameRequired"), "warn");
-        return;
-      }
+      if(!newName){ renderManagers(); setMessage(t("colorNameRequired"), "warn"); return; }
       if(COLORS.some((c, i) => i !== index && c.nombre.toLowerCase() === newName.toLowerCase())){
         renderManagers();
         setMessage(t("colorExists"), "warn");
         return;
       }
       if(newName === current) return;
-
       saveTempTableData();
       COLORS[index].nombre = newName;
       renameColorKeys(current, newName);
@@ -1512,9 +1556,7 @@
         return;
       }
       const name = COLORS[index].nombre;
-      if(!confirm(t("confirmDeleteColor", name))){
-        return;
-      }
+      if(!confirm(t("confirmDeleteColor", name))) return;
       saveTempTableData();
       COLORS.splice(index, 1);
       cleanOrphanData();
@@ -1543,16 +1585,11 @@
     function addSize(){
       const name = normalize(document.getElementById("newSizeName").value);
       const hex = document.getElementById("newSizeHex").value || "#a78bfa";
-
-      if(!name){
-        setMessage(t("sizeNameRequired"), "warn");
-        return;
-      }
+      if(!name){ setMessage(t("sizeNameRequired"), "warn"); return; }
       if(SIZES.some(s => s.nombre.toLowerCase() === name.toLowerCase())){
         setMessage(t("sizeExists"), "warn");
         return;
       }
-
       SIZES.push({ nombre: name, hex });
       document.getElementById("newSizeName").value = "";
       rebuildAll();
@@ -1562,19 +1599,13 @@
     function renameSize(index, newNameRaw){
       const newName = normalize(newNameRaw);
       const current = SIZES[index].nombre;
-
-      if(!newName){
-        renderManagers();
-        setMessage(t("sizeNameRequired"), "warn");
-        return;
-      }
+      if(!newName){ renderManagers(); setMessage(t("sizeNameRequired"), "warn"); return; }
       if(SIZES.some((s, i) => i !== index && s.nombre.toLowerCase() === newName.toLowerCase())){
         renderManagers();
         setMessage(t("sizeExists"), "warn");
         return;
       }
       if(newName === current) return;
-
       saveTempTableData();
       SIZES[index].nombre = newName;
       renameSizeKeys(current, newName);
@@ -1603,9 +1634,7 @@
         return;
       }
       const name = SIZES[index].nombre;
-      if(!confirm(t("confirmDeleteSize", name))){
-        return;
-      }
+      if(!confirm(t("confirmDeleteSize", name))) return;
       saveTempTableData();
       SIZES.splice(index, 1);
       cleanOrphanData();
@@ -1759,9 +1788,7 @@
     }
 
     function copyPreviousColor(){
-      if(mobileColorIndex <= 0){
-        return;
-      }
+      if(mobileColorIndex <= 0) return;
       const fromColor = COLORS[mobileColorIndex - 1].nombre;
       const toColor = COLORS[mobileColorIndex].nombre;
 
@@ -1905,6 +1932,7 @@
 
       const stacks = positions.map((pos, i) => ({
         id: pos.id,
+        order: i + 1,
         x: pos.x,
         y: pos.y,
         capacity: capacities[i],
@@ -2046,9 +2074,55 @@
     function renderTablePlan(stacks, planColumns, rows){
       const table = document.getElementById("realTable");
       table.innerHTML = "";
-      table.style.gridTemplateColumns = window.innerWidth < 700
-        ? `repeat(${Math.max(1, Math.min(planColumns, 2))}, minmax(160px, 1fr))`
+
+      const isMobile = window.innerWidth < 700;
+      table.style.gridTemplateColumns = isMobile
+        ? "1fr"
         : `repeat(${planColumns}, minmax(220px, 1fr))`;
+
+      const orderedStacks = [...stacks].sort((a,b) => a.order - b.order);
+
+      if(isMobile){
+        orderedStacks.forEach(stack => {
+          const div = document.createElement("div");
+          div.className = "pila";
+
+          const principal = mainColor(stack);
+          const summary = summarizeStack(stack);
+
+          let html = `
+            <div class="mobile-order">${t("orderLabel")} #${stack.order}</div>
+            <div class="coords">${t("position")} (${stack.x},${stack.y})</div>
+            <h3>${currentLang === "es" ? "Pila" : "Stack"} ${stack.id}</h3>
+            <div class="badge">${stack.pieces.length} ${t("pieces").toLowerCase()}</div>
+            <div class="badge">${t("capacity")} ${stack.capacity}</div>
+            <div style="font-size:13px;margin:8px 0;line-height:1.4;">
+              <span class="dot" style="background:${colorHex(principal)}"></span>
+              ${t("colorMain")}: <b>${displayColorName(principal)}</b>
+            </div>
+            <div class="stack-summary-list">
+          `;
+
+          summary.forEach(([key, qty]) => {
+            const [color, size] = key.split("|");
+            html += `
+              <div class="stack-summary-item">
+                <span class="dot stack-dot" style="background:${colorHex(color)}"></span>
+                <span class="size-badge stack-size-badge"
+                      style="background:${sizeHex(size)}; color:${sizeTextColor(size)}; border:1px solid rgba(0,0,0,.18);">
+                  ${size}
+                </span>
+                <span class="stack-summary-text">${displayColorName(color)} / ${size}: ${qty}</span>
+              </div>
+            `;
+          });
+
+          html += `</div>`;
+          div.innerHTML = html;
+          table.appendChild(div);
+        });
+        return;
+      }
 
       const map = {};
       stacks.forEach(s => map[`${s.x}_${s.y}`] = s);
@@ -2086,14 +2160,11 @@
 
           summary.forEach(([key, qty]) => {
             const [color, size] = key.split("|");
-            const badgeBg = sizeHex(size);
-            const badgeText = sizeTextColor(size);
-
             html += `
               <div class="stack-summary-item">
                 <span class="dot stack-dot" style="background:${colorHex(color)}"></span>
                 <span class="size-badge stack-size-badge"
-                      style="background:${badgeBg}; color:${badgeText}; border:1px solid rgba(0,0,0,.18);">
+                      style="background:${sizeHex(size)}; color:${sizeTextColor(size)}; border:1px solid rgba(0,0,0,.18);">
                   ${size}
                 </span>
                 <span class="stack-summary-text">${displayColorName(color)} / ${size}: ${qty}</span>
@@ -2221,9 +2292,7 @@
     }
 
     function forceInlineStylesForExport(container){
-      const all = container.querySelectorAll("*");
-
-      all.forEach(el => {
+      container.querySelectorAll("*").forEach(el => {
         const style = window.getComputedStyle(el);
         el.style.color = style.color;
         el.style.backgroundColor = style.backgroundColor;
@@ -2264,15 +2333,6 @@
         el.style.border = darkMode ? "1px solid #1d4ed8" : "1px solid #bfdbfe";
       });
 
-      container.querySelectorAll(".chip").forEach(el => {
-        el.style.backgroundColor = darkMode ? "#1f2937" : "#f8fafc";
-        el.style.border = `1px solid ${darkMode ? "#374151" : "#e5e7eb"}`;
-        el.style.display = "inline-flex";
-        el.style.alignItems = "center";
-        el.style.gap = "6px";
-        el.style.flexWrap = "wrap";
-      });
-
       container.querySelectorAll(".stack-summary-item").forEach(el => {
         el.style.display = "flex";
         el.style.alignItems = "center";
@@ -2297,6 +2357,14 @@
         el.style.marginTop = "8px";
       });
 
+      container.querySelectorAll(".mobile-order").forEach(el => {
+        el.style.display = "block";
+        el.style.fontSize = "12px";
+        el.style.fontWeight = "800";
+        el.style.color = darkMode ? "#93c5fd" : "#2563eb";
+        el.style.marginBottom = "6px";
+      });
+
       container.querySelectorAll(".stat, .check-box, .manager-item").forEach(el => {
         el.style.backgroundColor = darkMode ? "#1f2937" : "#f8fafc";
         el.style.border = `1px solid ${darkMode ? "#374151" : "#e5e7eb"}`;
@@ -2308,6 +2376,11 @@
         el.style.color = s.color;
         el.style.borderColor = s.borderColor;
       });
+
+      const exportTable = container.querySelector("#realTable");
+      if(exportTable && window.innerWidth < 700){
+        exportTable.style.gridTemplateColumns = "1fr";
+      }
     }
 
     async function capturePlanCanvas() {
